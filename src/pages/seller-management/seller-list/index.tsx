@@ -101,14 +101,14 @@ const TableList: React.FC<{}> = () => {
       title: 'Shop Name',
       dataIndex: 'shopName',
     },
-    {
-      title: 'Cell No',
-      dataIndex: 'cellNo',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'mail',
-    },
+    // {
+    //   title: 'Cell No',
+    //   dataIndex: 'cellNo',
+    // },
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'mail',
+    // },
     // {
     //   title: 'Price',
     //   dataIndex: 'price',
@@ -127,10 +127,10 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        // 0: { text: '关闭', status: 'Default' },
-        0: { text: 'Painding', status: 'Processing' },
-        1: { text: 'Approved', status: 'Success' },
-        2: { text: 'Rejected', status: 'Error' },
+        suspended: { text: 'Suspended', status: 'Default' },
+        pending: { text: 'Painding', status: 'Processing' },
+        approved: { text: 'Approved', status: 'Success' },
+        rejected: { text: 'Rejected', status: 'Error' },
       },
     },
    
@@ -182,11 +182,15 @@ const TableList: React.FC<{}> = () => {
                 <Menu
                   onClick={async (e) => {
                     if (e.key === 'remove') {
-                      await handleApproval(selectedRows, "2");
+                      await handleApproval(selectedRows, "rejected");
                       action.reload();
                     }
                     if (e.key === 'approve') {
-                      await handleApproval(selectedRows, "1");
+                      await handleApproval(selectedRows, "approved");
+                      action.reload();
+                    }
+                    if (e.key === 'suspend') {
+                      await handleApproval(selectedRows, "suspended");
                       action.reload();
                     }
                   }}
@@ -194,6 +198,7 @@ const TableList: React.FC<{}> = () => {
                 >
                   <Menu.Item key="remove">Reject</Menu.Item>
                   <Menu.Item key="approve">Approve</Menu.Item>
+                  <Menu.Item key="suspend">Suspend</Menu.Item>
                 </Menu>
               }
             >

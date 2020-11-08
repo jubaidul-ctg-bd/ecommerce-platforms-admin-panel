@@ -50,9 +50,15 @@ const errorHandler = (error: { response: Response }): Response => {
  * Configure the default parameters for request
  */
 // let baseUrl = ;
+
+
+var token = localStorage.getItem('access_token');
 const request = extend({
   errorHandler, // Default error handling
   credentials: 'include', // Does the default request bring cookies
+  headers: {
+    'Authorization': localStorage.getItem('access_token')+'',
+  }
 });
 
 let baseUrl = defaultSettings.devBaseUrl;
@@ -61,7 +67,11 @@ if (process.env.NODE_ENV == "production"){
   baseUrl = defaultSettings.liveBaseUrl;
 }
 
+
 request.interceptors.request.use((url, options) => {
+  // options.headers = {
+  //   'Authorization': localStorage.getItem('access_token')+'',
+  // }
   return {
     url: baseUrl+ `${url}`,
     options: { ...options, interceptors: true },

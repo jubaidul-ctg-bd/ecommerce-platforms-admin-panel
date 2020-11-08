@@ -95,11 +95,17 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value3, updateValue3] = useState<string>(null);
   const [name, updateName] = useState<string>(null);
 
-
   const [options, setOptions] = useState([])
   useEffect(() => {
-    getOptions();    
+    getOptions(); 
   },[])
+
+  form.setFieldsValue({
+    icon: value1,
+    image:value2,
+    banner: value3,
+  });   
+  console.log(value1, value2, value3);
   
   const getOptions = async() => {
     let val = await categoryQuery();
@@ -199,7 +205,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             name="parentCategories"
           >
             <Cascader
-              fieldNames={{ label: 'title', value: 'title', children: 'children' }}
+              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
@@ -271,7 +277,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               Click to upload
             </Button>
             {update.value1 ? (
-              <Input value={update.value1}
+              <Input 
                 name="icon"
                 prefix={<Image
                 width={50}
@@ -289,7 +295,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               Click to upload
             </Button>
             {update.value2 ? (
-              <Input value={update.value2}
+              <Input 
                 name="image"
                 prefix={<Image
                 width={50}
@@ -308,7 +314,9 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               Click to upload
             </Button>
             {update.value3 ? (
-              <Input value={update.value3} name="banner" prefix={<Image
+              <Input 
+                name="banner" 
+                prefix={<Image
                 width={50}
                 src={update.value3}
               />} disabled/>

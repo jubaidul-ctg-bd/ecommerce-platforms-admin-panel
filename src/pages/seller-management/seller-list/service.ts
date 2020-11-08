@@ -3,7 +3,7 @@ import { TableListParams } from './data.d';
 // import {request} from 'src/app'
 
 export async function queryRule(params?: TableListParams) {     
-  let value = await request('/sellers/all', {
+  let value = await request('/seller/all', {
     params,
   });
   console.log("value", value);
@@ -12,7 +12,7 @@ export async function queryRule(params?: TableListParams) {
 }
 
 export async function removeRule(params: { id: string }) {  
-  return request('/sellers/delete', {
+  return request('/seller/delete', {
     method: 'POST',
     data: {
       ...params,
@@ -22,7 +22,7 @@ export async function removeRule(params: { id: string }) {
 }
 
 export async function approvalRul(params: any, status: string) {  
-  return request('/sellers/update', {
+  return request('/seller/update', {
     method: 'POST',
     data: {
       ...params,

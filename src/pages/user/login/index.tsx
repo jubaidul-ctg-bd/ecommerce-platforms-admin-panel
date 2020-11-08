@@ -46,14 +46,14 @@ const Login: React.FC<LoginProps> = (props) => {
   return (
     <div className={styles.main}>
       <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-        <Tab key="account" tab="Account password login">
+        <Tab key="account" tab="Admin Account Login">
           {status === 'error' && loginType === 'account' && !submitting && (
             <LoginMessage content="Incorrect account or password （admin/ant.design）" />
           )}
 
           <UserName
             name="userName"
-            placeholder="username"
+            placeholder="email or phone"
             rules={[
               {
                 required: true,
@@ -72,7 +72,7 @@ const Login: React.FC<LoginProps> = (props) => {
             ]}
           />
         </Tab>
-        <Tab key="mobile" tab="Mobile number login">
+        {/* <Tab key="mobile" tab="Mobile number login">
           {status === 'error' && loginType === 'mobile' && !submitting && (
             <LoginMessage content="Verification code error" />
           )}
@@ -103,7 +103,7 @@ const Login: React.FC<LoginProps> = (props) => {
               },
             ]}
           />
-        </Tab>
+        </Tab> */}
         <div>
           <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
             automatic log-in
@@ -119,9 +119,9 @@ const Login: React.FC<LoginProps> = (props) => {
         <Submit loading={submitting}>Login</Submit>
         <div className={styles.other}>
           Other login methods
-          <AlipayCircleOutlined className={styles.icon} />
+          {/* <AlipayCircleOutlined className={styles.icon} />
           <TaobaoCircleOutlined className={styles.icon} />
-          <WeiboCircleOutlined className={styles.icon} />
+          <WeiboCircleOutlined className={styles.icon} /> */}
           <Link className={styles.register} to="/user/register">
             Register account
           </Link>
