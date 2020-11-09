@@ -14,6 +14,7 @@ export async function fakeAccountLogin(params: LoginParamsType) {
     data: {
       username: params.userName,
       password: params.password,
+      userAgent: 'admin',
     },
   });
   console.log("auth======", auth.role);

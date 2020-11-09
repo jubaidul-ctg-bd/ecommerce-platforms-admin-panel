@@ -53,13 +53,18 @@ const errorHandler = (error: { response: Response }): Response => {
 
 
 var token = localStorage.getItem('access_token');
-const request = extend({
+let reqExtendObj : any = {
   errorHandler, // Default error handling
   credentials: 'include', // Does the default request bring cookies
-  headers: {
-    'Authorization': localStorage.getItem('access_token')+'',
+}
+
+if(localStorage.getItem('access_token')){
+  reqExtendObj['headers']= {
+    'Authorization': localStorage.getItem('access_token')
   }
-});
+}
+
+const request = extend(reqExtendObj);
 
 let baseUrl = defaultSettings.devBaseUrl;
 // console.log("process.env.NODE_ENV",process.env.NODE_ENV);
