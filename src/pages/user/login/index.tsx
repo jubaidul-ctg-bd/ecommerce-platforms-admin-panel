@@ -118,13 +118,13 @@ const Login: React.FC<LoginProps> = (props) => {
         </div>
         <Submit loading={submitting}>Login</Submit>
         <div className={styles.other}>
-          Other login methods
+          {/* Other login methods */}
           {/* <AlipayCircleOutlined className={styles.icon} />
           <TaobaoCircleOutlined className={styles.icon} />
           <WeiboCircleOutlined className={styles.icon} /> */}
-          <Link className={styles.register} to="/user/register">
+          {/* <Link className={styles.register} to="/user/register">
             Register account
-          </Link>
+          </Link> */}
         </div>
       </LoginFrom>
     </div>

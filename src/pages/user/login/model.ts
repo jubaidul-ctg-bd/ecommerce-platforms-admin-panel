@@ -57,7 +57,7 @@ const Model: ModelType = {
       });
       // Login successfully
       if (response.status === 'ok') {
-        message.success('登录成功！');
+        message.success('login successful!');
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -73,7 +73,11 @@ const Model: ModelType = {
             return;
           }
         }
-        history.replace(redirect || '/');
+        history.replace(redirect || '/dashboard/monitor');
+      }
+      else {
+        message.error('email or password incorrect');
+        return;
       }
     },
 

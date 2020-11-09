@@ -7,7 +7,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
 import { history } from 'umi'
 
 /**
@@ -55,6 +55,26 @@ const handleUpdate = async (fields: FormValueType) => {
   } catch (error) {
     hide();
     message.error('配置失败请重试！');
+    return false;
+  }
+};
+
+
+const handleApproval = async (selectedRows: TableListItem[], status: string) => {
+  const hide = message.loading('Approving');
+
+  console.log("selectedRows", selectedRows);
+  
+  
+  if (!selectedRows) return true;
+  try {
+    await approvalRul(selectedRows, status);
+    hide();
+    message.success('Approved successfully, will refresh soon');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Approval failed, please try again');
     return false;
   }
 };
@@ -123,8 +143,8 @@ const handleRemove = async (e: TableListItem) => {
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        1: { text: 'Published', status: 'Success' },
-        0: { text: 'Unpublished', status: 'Error' },
+        published: { text: 'Published', status: 'Success' },
+        unpublished: { text: 'Unpublished', status: 'Error' },
       },
     },
     {
@@ -206,15 +226,19 @@ const handleRemove = async (e: TableListItem) => {
               overlay={
                 <Menu
                   onClick={async (e) => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
+                    if (e.key === 'Publish') {
+                      await handleApproval(selectedRows, "published");
+                      action.reload();
+                    }
+                    if (e.key === 'Unpublish') {
+                      await handleApproval(selectedRows, "unpublished");
                       action.reload();
                     }
                   }}
                   selectedKeys={[]}
                 >
-                  <Menu.Item key="remove">Remove</Menu.Item>
-                  <Menu.Item key="approval">Approval</Menu.Item>
+                  <Menu.Item key="Publish">Publish</Menu.Item>
+                  <Menu.Item key="Unpublish">Unpublish</Menu.Item>
                 </Menu>
               }
             >

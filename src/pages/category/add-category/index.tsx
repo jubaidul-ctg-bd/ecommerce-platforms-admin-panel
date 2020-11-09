@@ -257,10 +257,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           >
             <div>
               <Radio.Group>
-                <Radio value="1">
+                <Radio value="published">
                   <FormattedMessage id="formandbasic-form.radio.publish" />
                 </Radio>
-                <Radio value="2">
+                <Radio value="unpublished">
                   <FormattedMessage id="formandbasic-form.radio.unpublish" />
                 </Radio>
               </Radio.Group>

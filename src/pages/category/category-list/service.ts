@@ -15,6 +15,16 @@ export async function queryRule() {
   return {data:rqResult};
 }
 
+export async function approvalRul(params: any, status: string) {  
+  return request('/category/update', {
+    method: 'POST',
+    data: {
+      ...params,
+      status,
+    },
+  });
+}
+
 
 export async function removeRule(params: { id: string }) {
   console.log("params=======", params);

@@ -4,6 +4,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
 import { queryRule, removeRule } from '../../../media/manage-media/service';
 import { TableListParams } from '../data';
+import  proSettings  from '../../../../../config/defaultSettings';
+
 
 
 function getBase64(file) {
@@ -84,7 +86,7 @@ function getBase64(file) {
     return (
       <>
         <Upload
-          action="http://localhost:3000/cats/upload"
+          action={proSettings.baseUrl+"/media/upload?dest=categoryImages"}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

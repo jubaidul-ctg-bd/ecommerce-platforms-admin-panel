@@ -53,7 +53,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
               </Link>
             </div>
             <div className={styles.desc}>
-              {/* Admin Login */}
+              Admin Login
             </div>
           </div>
           {children}

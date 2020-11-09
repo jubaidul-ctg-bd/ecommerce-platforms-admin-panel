@@ -1,5 +1,5 @@
-import Password from 'antd/lib/input/Password';
 import request from 'umi-request';
+// import  proSettings  from '../../../../config/defaultSettings';
 
 export interface LoginParamsType {
   userName: string;
@@ -8,33 +8,28 @@ export interface LoginParamsType {
   captcha: string;
 }
 
-//http://192.168.0.107:3000/api/auth/login
-///api/login/account
 export async function fakeAccountLogin(params: LoginParamsType) {
-  let hell = await request('/api/auth/login', {
+  const auth = await request('/user/login', {
     method: 'POST',
     data: {
-      "email": params.userName,
-      "password": params.password,
-    }
+      username: params.userName,
+      password: params.password,
+    },
   });
-
-  //return hell;
-  
-  console.log(hell);
-
-  if (hell) {
+  console.log("auth======", auth.role);
+  if(auth.status==="ok" && auth.role=="ebhubon-admin")
+  {
+    localStorage.setItem("access_token", auth.access_token)
+    // proSettings.authToken = auth.access_token;
     return {
-      status: 'ok',
-      currentAuthority: 'admin',
-    }
+    status: 'ok',
+    currentAuthority: 'admin',
+  };
   }
-  else return {status: 'ok'}
-
-  // if(hell.access_token)
-  //       status: 'ok',
-  //       type,
-  //       currentAuthority: 'admin',
+  else return {
+    status: 'error',
+    currentAuthority: 'guest',
+  }
 }
 
 export async function getFakeCaptcha(mobile: string) {
