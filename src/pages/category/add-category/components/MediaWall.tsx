@@ -54,7 +54,7 @@ function getBase64(file) {
       previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
     });
 
-    this.props.updateurl({url:file.url, modelState: false, name: this.props.reqName});
+    this.props.updateurl({url:file.name, modelState: false, name: this.props.reqName});
   };
 
   handleRemove = async (file: TableListParams) => {

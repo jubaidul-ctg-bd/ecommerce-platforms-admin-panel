@@ -9,6 +9,7 @@ import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
 import { history } from 'umi'
+import proSettings from '../../../../config/defaultSettings';
 
 /**
  * 添加节点
@@ -153,7 +154,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
         />
       ),
     },
@@ -163,7 +164,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
         />
       ),
     },
@@ -173,7 +174,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
         />
       ),
     },

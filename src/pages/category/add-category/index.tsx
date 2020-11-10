@@ -15,6 +15,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
 import { categoryQuery } from './service'
+import proSettings from '../../../../config/defaultSettings';
 
 
 // const options = [
@@ -281,7 +282,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 name="icon"
                 prefix={<Image
                 width={50}
-                src={update.value1}
+                src={proSettings.baseUrl+"/media/image?url=categoryImages/"+update.value1}
               />} disabled/>
             ) : null}
           </Form.Item>
@@ -299,7 +300,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 name="image"
                 prefix={<Image
                 width={50}
-                src={update.value2}
+                src={proSettings.baseUrl+"/media/image?url=categoryImages/"+update.value2}
               />} disabled/>
             ) : null}
           </Form.Item>
@@ -318,7 +319,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 name="banner" 
                 prefix={<Image
                 width={50}
-                src={update.value3}
+                src={proSettings.baseUrl+"/media/image?url=categoryImages/"+update.value3}
               />} disabled/>
             ) : null}
           </Form.Item>
