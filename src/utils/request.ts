@@ -16,6 +16,7 @@ const codeMessage = {
   403: 'The user is authorized, but access is forbidden.  ',
   404: 'The request sent was for a record that did not exist, and the server did not operate.  ',
   406: 'The requested format is not available.',
+  409: 'Duplicate key error.',
   410: 'The requested resource is permanently deleted and will no longer be available.  ',
   422: 'When creating an object, a validation error occurred.  ',
   500: 'An error occurred in the server, please check the server.  ',
@@ -28,6 +29,8 @@ const codeMessage = {
  * Exception handler
  */
 const errorHandler = (error: { response: Response }): Response => {
+  console.log("sdfasdfasdfasdfasdfad");
+  
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
@@ -46,25 +49,32 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
+
+
 /**
  * Configure the default parameters for request
  */
 // let baseUrl = ;
 
+// localStorage.getItem('access_token') || ''
 
-var token = localStorage.getItem('access_token');
-let reqExtendObj : any = {
+console.log("extend==============", extend);
+
+
+const request = extend({
   errorHandler, // Default error handling
   credentials: 'include', // Does the default request bring cookies
-}
-
-if(localStorage.getItem('access_token')){
-  reqExtendObj['headers']= {
-    'Authorization': localStorage.getItem('access_token')
-  }
-}
-
-const request = extend(reqExtendObj);
+  // mode: 'cors',
+  // headers: {
+  //   'Authorization': localStorage.getItem('access_token') || '',
+  //   'Accept': '*/*',
+  //   'Accept-Encoding': 'gzip, deflate',
+  //   'Accept-Language': 'en-US,en;q=0.9,bn-BD;q=0.8,bn;q=0.7',
+  //   'Connection': 'keep-alive',
+  //   "Content-Type": "application/json,text/plain, */*; charset=utf-8",
+  // },
+  
+});
 
 let baseUrl = defaultSettings.devBaseUrl;
 // console.log("process.env.NODE_ENV",process.env.NODE_ENV);
@@ -72,15 +82,16 @@ if (process.env.NODE_ENV == "production"){
   baseUrl = defaultSettings.liveBaseUrl;
 }
 
-
 request.interceptors.request.use((url, options) => {
-  // options.headers = {
-  //   'Authorization': localStorage.getItem('access_token')+'',
-  // }
+  const headers = {
+    'Authorization': localStorage.getItem('access_token') || '',
+  }
   return {
     url: baseUrl+ `${url}`,
-    options: { ...options, interceptors: true },
+    options: { ...options, headers },
   };
 });
+
+// interceptors: true
 
 export default request;

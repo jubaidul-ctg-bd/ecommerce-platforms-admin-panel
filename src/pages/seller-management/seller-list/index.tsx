@@ -101,14 +101,14 @@ const TableList: React.FC<{}> = () => {
       title: 'Shop Name',
       dataIndex: 'shopName',
     },
-    // {
-    //   title: 'Cell No',
-    //   dataIndex: 'cellNo',
-    // },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'mail',
-    // },
+    {
+      title: 'Cell No',
+      dataIndex: 'cellNo',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'mail',
+    },
     // {
     //   title: 'Price',
     //   dataIndex: 'price',
@@ -128,7 +128,7 @@ const TableList: React.FC<{}> = () => {
       hideInForm: true,
       valueEnum: {
         suspended: { text: 'Suspended', status: 'Default' },
-        pending: { text: 'Painding', status: 'Processing' },
+        pending: { text: 'Pending', status: 'Processing' },
         approved: { text: 'Approved', status: 'Success' },
         rejected: { text: 'Rejected', status: 'Error' },
       },
