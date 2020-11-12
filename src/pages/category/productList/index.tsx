@@ -9,6 +9,7 @@ import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule } from './service';
 import { history } from 'umi';
+import proSettings from '../../../../config/defaultSettings';
 
 /**
  * 添加节点
@@ -126,7 +127,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },
@@ -136,7 +137,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },
@@ -146,7 +147,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },

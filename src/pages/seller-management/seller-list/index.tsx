@@ -1,264 +1,134 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Image, Popconfirm } from 'antd';
-import React, { useState, useRef } from 'react';
+
+import { Upload, Modal, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import React from 'react';
+import { queryRule, removeRule, upload } from './service';
+import { TableListParams } from './data';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import  proSettings  from '../../../../config/defaultSettings';
+import { RcFile } from 'antd/lib/upload';
 
-import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
 
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleApproval = async (selectedRows: TableListItem[], status: string) => {
-  const hide = message.loading('Approving');
-
-  console.log("selectedRows", selectedRows);
-  
-  
-  if (!selectedRows) return true;
-  try {
-    await approvalRul(selectedRows, status);
-    hide();
-    message.success('Approved successfully, will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Approval failed, please try again');
-    return false;
-  }
-};
-
-const TableList: React.FC<{}> = () => {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
-  const actionRef = useRef<ActionType>();
-  const handleRemove = async (e: TableListItem) => {
-    const hide = message.loading('Deleting');
+function handleUpload(file) {
+  return new Promise((resolve, reject) => {
     
-    if (!e) return true;
+  });
+}
+
+ class PicturesWall extends React.Component {
+  // image = request('http://localhost:3000/cats');
+  // console.log(image);
+  /**
+   *
+   */
+  // getRuls= async()=>{
+  //   return await queryRule();
+  // }
+
+   state = {
+    previewVisible: false,
+    previewImage: '',
+    previewTitle: '',
+    fileList: [],
+
+  };
+
+  componentDidMount() {
+    // fetch the project name, once it retrieves resolve the promsie and update the state. 
+    this.getRules().then(result => this.setState({
+      fileList: result
+    }))
+  }
+
+  async getRules() {
+    // replace with whatever your api logic is.
+    const value=await queryRule();
+    console.log('query rules:',value);
+    
+    return value;
+  }
+  
+  handleCancel = () => this.setState({ previewVisible: false });
+
+  handlePreview = async file => {
+    
+    console.log('query rule', await queryRule());
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    this.setState({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    });
+  };
+
+  uploadMedia = (file) => {
+    return upload(file);
+ }
+
+  handleRemove = async (file: TableListParams) => {
+    
+    console.log('query rule', file);
     try {
-      await removeRule({
-        id: e._id,
-      });
-      actionRef.current.reload();
-      hide();
+      await removeRule({name: file.name,});
       message.success('Deleted successfully, will refresh soon');
       return true;
-    } catch (error) {    
-      hide();
+    } catch (error) {
       message.error('Deletion failed, please try again');
       return false;
     }
+    
   };
-  const columns: ProColumns<TableListItem>[] = [
-    {
-      title: 'Shop Name',
-      dataIndex: 'shopName',
-    },
-    {
-      title: 'Cell No',
-      dataIndex: 'cellNo',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'mail',
-    },
-    // {
-    //   title: 'Price',
-    //   dataIndex: 'price',
-    //   sorter: true,
-    //   hideInForm: true,
-    //   renderText: (val: string) => `${val} TK`,
-    // },
-    // {
-    //   title: 'Quantity',
-    //   dataIndex: 'quantity',
-    //   sorter: true,
-    //   hideInForm: true,
-    // },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      hideInForm: true,
-      valueEnum: {
-        suspended: { text: 'Suspended', status: 'Default' },
-        pending: { text: 'Pending', status: 'Processing' },
-        approved: { text: 'Approved', status: 'Success' },
-        rejected: { text: 'Rejected', status: 'Error' },
-      },
-    },
-   
-    {
-      title: 'Option',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => (
 
-        <>
-          {/* <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
-            }}
-          >
-            Edit
-          </a>
-          <Divider type="vertical" /> */}
-          < Popconfirm title = { ` Confirm ${ "Delete" } ? ` } okText = " Yes " cancelText = " No " >   
-            <a
-              onClick={async () => {
-                  await handleRemove(record);
-                  //action.reload();
-                }
-              }
-            >
-              Delete
-            </a> 
-          </ Popconfirm >
-        </>
-      ),
-    },
-  ];
 
-  return (
-    <PageHeaderWrapper>
-      <ProTable<TableListItem>
-        headerTitle="Seller List"
-        actionRef={actionRef}
-        rowKey="_id"
-        toolBarRender={(action, { selectedRows }) => [
-          // <Button type="primary" onClick={() => handleModalVisible(true)}>
-          //   <PlusOutlined />  ADD
-          // </Button>,
-          selectedRows && selectedRows.length > 0 && (
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={async (e) => {
-                    if (e.key === 'remove') {
-                      await handleApproval(selectedRows, "rejected");
-                      action.reload();
-                    }
-                    if (e.key === 'approve') {
-                      await handleApproval(selectedRows, "approved");
-                      action.reload();
-                    }
-                    if (e.key === 'suspend') {
-                      await handleApproval(selectedRows, "suspended");
-                      action.reload();
-                    }
-                  }}
-                  selectedKeys={[]}
-                >
-                  <Menu.Item key="remove">Reject</Menu.Item>
-                  <Menu.Item key="approve">Approve</Menu.Item>
-                  <Menu.Item key="suspend">Suspend</Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                Bulk operation <DownOutlined />
-              </Button>
-            </Dropdown>
-          ),
-        ]}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-          <div>
-            Chosen <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> item&nbsp;&nbsp;
-            {/* <span>
-             Total number of service calls {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} Ten thousand
-            </span> */}
-          </div>
-        )}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
-        columns={columns}
-        rowSelection={{}}
-      />
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <ProTable<TableListItem, TableListItem>
-          onSubmit={async (value) => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          rowKey="_id"
-          type="form"
-          columns={columns}
-          rowSelection={{}}
-        />
-      </CreateForm>
-      {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null}
-    </PageHeaderWrapper>
-  );
-};
 
-export default TableList;
+  handleChange = ({ fileList }) => this.getRules().then(result => this.setState({
+    fileList: result
+  }))
+
+  render() {
+    const { previewVisible, previewImage, fileList, previewTitle } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+    return (
+      <PageHeaderWrapper>
+        <Upload
+          action={this.uploadMedia}
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={this.handlePreview}
+          onChange={this.handleChange}
+          onRemove={this.handleRemove}
+          name="icon"
+        >
+          {uploadButton}
+        </Upload>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={this.handleCancel}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </PageHeaderWrapper>
+    );
+  }
+}
+
+export default PicturesWall;

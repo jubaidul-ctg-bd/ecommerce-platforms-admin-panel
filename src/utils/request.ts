@@ -84,7 +84,7 @@ if (process.env.NODE_ENV == "production"){
 
 request.interceptors.request.use((url, options) => {
   const headers = {
-    'Authorization': localStorage.getItem('access_token') || '',
+    'Authorization': 'Bearer '+localStorage.getItem('access_token'),
   }
   return {
     url: baseUrl+ `${url}`,
