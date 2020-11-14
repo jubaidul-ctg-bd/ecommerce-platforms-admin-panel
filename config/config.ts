@@ -69,7 +69,6 @@ export default defineConfig({
               path: '/',
               redirect: '/user/login',
             },
-
             {
               path: '/dashboard',
               name: 'dashboard',
@@ -148,6 +147,46 @@ export default defineConfig({
                 },
               ],
             },
+
+            {
+              path: '/user-management',
+              name: 'user-management',
+              icon: 'UserSwitchOutlined', 
+              routes: [
+                {
+                  name: 'user-list',
+                  icon: 'smile',
+                  path: '/user-management/user-list',
+                  component: './user-management/user-list',
+                },
+                // {
+                //   name: 'register-result',
+                //   icon: 'smile',
+                //   path: '/user-management/register-result',
+                //   component: './user-management/register-result',
+                // },
+                {
+                  name: 'register',
+                  icon: 'smile',
+                  path: '/user-management/register',
+                  component: './user-management/register',
+                },
+              ],
+            },
+
+
+            // {
+            //   name: 'register-result',
+            //   icon: 'smile',
+            //   path: '/user-management/register-result',
+            //   component: './user-management/register-result',
+            // },
+            // {
+            //   name: 'register',
+            //   icon: 'smile',
+            //   path: '/user-management/register',
+            //   component: './user-management/register',
+            // },
 
             
           

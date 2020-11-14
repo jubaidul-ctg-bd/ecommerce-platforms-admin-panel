@@ -2,6 +2,7 @@ import { Effect } from 'umi';
 import { message } from 'antd';
 import { fakeSubmitForm } from './service';
 
+
 export interface ModelType {
   namespace: string;
   state: {};

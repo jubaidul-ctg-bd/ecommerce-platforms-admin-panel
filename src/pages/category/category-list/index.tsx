@@ -119,11 +119,11 @@ const handleRemove = async (e: TableListItem) => {
     },
     {
       title: 'Parent Category',
-      dataIndex: 'parent-category',
+      dataIndex: 'parentCategoryTitle',
     },
     {
       title: 'Description',
-      dataIndex: 'desc',
+      dataIndex: 'description',
       valueType: 'textarea',
     },
     // {
@@ -154,7 +154,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },
@@ -164,7 +164,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },
@@ -174,7 +174,7 @@ const handleRemove = async (e: TableListItem) => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={proSettings.baseUrl+"/media/image?url=categoryImages/"+val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },
@@ -187,8 +187,8 @@ const handleRemove = async (e: TableListItem) => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              // handleUpdateModalVisible(true);
+              // setStepFormValues(record);
             }}
           >
             Edit

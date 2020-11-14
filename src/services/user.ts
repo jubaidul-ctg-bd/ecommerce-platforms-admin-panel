@@ -13,7 +13,6 @@ export async function query(): Promise<any> {
 export async function queryCurrent(): Promise<any> {
   // console.log("Hello LocalStorage=======",localStorage.getItem('access_token'));
   let value = await request('/user/currentUser');
-  console.log("value=============", value);
   value.name = value.mail;
   value.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
   return value;

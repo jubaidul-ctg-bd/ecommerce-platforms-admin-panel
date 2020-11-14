@@ -2,11 +2,10 @@
 import { Upload, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { queryRule, removeRule, upload } from './service';
-import { TableListParams } from './data';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import  proSettings  from '../../../../config/defaultSettings';
-import { RcFile } from 'antd/lib/upload';
+import { queryRule, removeRule } from '../../../media/manage-media/service';
+import { TableListParams } from '../data';
+import  proSettings  from '../../../../../config/defaultSettings';
+
 
 
 function getBase64(file) {
@@ -18,28 +17,12 @@ function getBase64(file) {
   });
 }
 
-function handleUpload(file) {
-  return new Promise((resolve, reject) => {
-    
-  });
-}
-
- class PicturesWall extends React.Component {
-  // image = request('http://localhost:3000/cats');
-  // console.log(image);
-  /**
-   *
-   */
-  // getRuls= async()=>{
-  //   return await queryRule();
-  // }
-
+ class MediaWall extends React.Component {
    state = {
     previewVisible: false,
     previewImage: '',
     previewTitle: '',
     fileList: [],
-
   };
 
   componentDidMount() {
@@ -52,7 +35,7 @@ function handleUpload(file) {
   async getRules() {
     // replace with whatever your api logic is.
     const value=await queryRule();
-    console.log('query rules:',value);
+    //console.log('query rules:',value);
     
     return value;
   }
@@ -60,26 +43,23 @@ function handleUpload(file) {
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = async file => {
-    
-    console.log('query rule', await queryRule());
+    //console.log('handlePreview=========', file);
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
 
     this.setState({
       previewImage: file.url || file.preview,
-      previewVisible: true,
+      //previewVisible: true,
       previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
     });
-  };
 
-  uploadMedia = (file) => {
-    return upload(file);
- }
+    this.props.updateurl({url:file.name, modelState: false, name: this.props.reqName});
+  };
 
   handleRemove = async (file: TableListParams) => {
     
-    console.log('query rule', file);
+    //console.log('handleRemove============', file);
     try {
       await removeRule({name: file.name,});
       message.success('Deleted successfully, will refresh soon');
@@ -91,7 +71,9 @@ function handleUpload(file) {
     
   };
 
-
+  uploadMedia = (file) => {
+    return upload(file);
+ }
 
   handleChange = ({ fileList }) => this.getRules().then(result => this.setState({
     fileList: result
@@ -106,14 +88,14 @@ function handleUpload(file) {
       </div>
     );
     return (
-      <PageHeaderWrapper>
+      <>
         <Upload
           action={this.uploadMedia}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
-          onRemove={this.handleRemove}
+          //onRemove={this.handleRemove}
           name="icon"
         >
           {uploadButton}
@@ -126,9 +108,9 @@ function handleUpload(file) {
         >
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-      </PageHeaderWrapper>
+      </>
     );
   }
 }
 
-export default PicturesWall;
+export default MediaWall;

@@ -8,44 +8,42 @@ import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
+import { history } from 'umi'
+import  Register  from '../register/index' 
+
 
 /**
  * 添加节点
  * @param fields
  */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
+const handleAdd = () => {
+  history.replace({
+    pathname: '/user-management/register',
+  });
+}
+
 
 /**
  * 更新节点
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('Updating');
   try {
     await updateRule({
       name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
+      mail: fields.mail,
+      _id: fields._id,
+      role: fields.role,
+      cellNo: fields.cellNo,
     });
     hide();
 
-    message.success('配置成功');
+    message.success('Succesfully Updated');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('Update Faile');
     return false;
   }
 };
@@ -54,7 +52,7 @@ const handleUpdate = async (fields: FormValueType) => {
  *  删除节点
  * @param selectedRows
  */
-const handleApproval = async (selectedRows: TableListItem[], status: string) => {
+const handleApproval = async (selectedRows: TableListItem[], role: string) => {
   const hide = message.loading('Approving');
 
   console.log("selectedRows", selectedRows);
@@ -62,7 +60,7 @@ const handleApproval = async (selectedRows: TableListItem[], status: string) => 
   
   if (!selectedRows) return true;
   try {
-    await approvalRul(selectedRows, status);
+    await approvalRul(selectedRows, role);
     hide();
     message.success('Approved successfully, will refresh soon');
     return true;
@@ -72,6 +70,7 @@ const handleApproval = async (selectedRows: TableListItem[], status: string) => 
     return false;
   }
 };
+
 
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -98,16 +97,26 @@ const TableList: React.FC<{}> = () => {
   };
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: 'Shop Name',
-      dataIndex: 'shopName',
+      title: 'Name',
+      dataIndex: 'name',
     },
     {
-      title: 'Cell No',
-      dataIndex: 'cellNo',
+      title: 'User Role',
+      dataIndex: 'role',
+      hideInForm: true,
+      valueEnum: {
+        'ebhubon-admin': { text: 'Admin'},
+        'user': { text: 'User' },
+        'seller-admin': { text: 'Seller' },
+      },
     },
     {
       title: 'Email',
       dataIndex: 'mail',
+    },
+    {
+      title: 'Cell No',
+      dataIndex: 'cellNo',
     },
     // {
     //   title: 'Price',
@@ -123,18 +132,6 @@ const TableList: React.FC<{}> = () => {
     //   hideInForm: true,
     // },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      hideInForm: true,
-      valueEnum: {
-        suspended: { text: 'Suspended', status: 'Default' },
-        pending: { text: 'Pending', status: 'Processing' },
-        approved: { text: 'Approved', status: 'Success' },
-        rejected: { text: 'Rejected', status: 'Error' },
-      },
-    },
-   
-    {
       title: 'Option',
       dataIndex: 'option',
       valueType: 'option',
@@ -142,10 +139,10 @@ const TableList: React.FC<{}> = () => {
 
         <>
           <a
-            // onClick={() => {
-            //   handleUpdateModalVisible(true);
-            //   setStepFormValues(record);
-            // }}
+            onClick={() => {
+              handleUpdateModalVisible(true);
+              setStepFormValues(record);
+            }}
           >
             Edit
           </a>
@@ -169,36 +166,36 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageHeaderWrapper>
       <ProTable<TableListItem>
-        headerTitle="Seller List"
+        headerTitle="All User"
         actionRef={actionRef}
         rowKey="_id"
         toolBarRender={(action, { selectedRows }) => [
-          // <Button type="primary" onClick={() => handleModalVisible(true)}>
-          //   <PlusOutlined />  ADD
-          // </Button>,
+          <Button type="primary" onClick={() => handleAdd()}>
+            <PlusOutlined />  ADD
+          </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
                 <Menu
                   onClick={async (e) => {
-                    if (e.key === 'remove') {
-                      await handleApproval(selectedRows, "rejected");
+                    if (e.key === 'user') {
+                      await handleApproval(selectedRows, "user");
                       action.reload();
                     }
-                    if (e.key === 'approve') {
-                      await handleApproval(selectedRows, "approved");
+                    if (e.key === 'admin') {
+                      await handleApproval(selectedRows, "ebhubon-admin");
                       action.reload();
                     }
-                    if (e.key === 'suspend') {
-                      await handleApproval(selectedRows, "suspended");
+                    if (e.key === 'seller') {
+                      await handleApproval(selectedRows, "seller-admin");
                       action.reload();
                     }
                   }}
                   selectedKeys={[]}
                 >
-                  <Menu.Item key="remove">Reject</Menu.Item>
-                  <Menu.Item key="approve">Approve</Menu.Item>
-                  <Menu.Item key="suspend">Suspend</Menu.Item>
+                  <Menu.Item key="user">User</Menu.Item>
+                  <Menu.Item key="admin">Admin</Menu.Item>
+                  <Menu.Item key="seller">Seller</Menu.Item>
                 </Menu>
               }
             >

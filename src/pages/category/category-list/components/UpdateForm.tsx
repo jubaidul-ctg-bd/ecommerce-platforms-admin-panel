@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
-import { Form, Button, DatePicker, Input, Modal, Radio, Select, Steps } from 'antd';
+import { Form, Button, DatePicker, Input, Modal, Radio, Select, Steps, Card } from 'antd';
 
 import { TableListItem } from '../data.d';
+import { formatMessage, FormattedMessage } from 'umi';
+import MediaWall from './MediaWall';
+
+
+
+
+const InputGroup = Input.Group;
+
+
+function handleChange(value) {
+  console.log(`selected ${value}`);
+}
 
 export interface FormValueType extends Partial<TableListItem> {
   target?: string;
@@ -9,6 +21,7 @@ export interface FormValueType extends Partial<TableListItem> {
   type?: string;
   time?: string;
   frequency?: string;
+  phone?:string
 }
 
 export interface UpdateFormProps {
@@ -29,20 +42,17 @@ export interface UpdateFormState {
 }
 
 const formLayout = {
-  labelCol: { span: 7 },
-  wrapperCol: { span: 13 },
+  // labelCol: { span: 7 },
+  // wrapperCol: { span: 13 },
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const [formVals, setFormVals] = useState<FormValueType>({
     name: props.values.name,
-    desc: props.values.desc,
-    key: props.values.key,
-    target: '0',
-    template: '0',
-    type: '1',
-    time: '',
-    frequency: 'month',
+    mail: props.values.mail,
+    _id: props.values._id,
+    cellNo: props.values.cellNo,
+    role: props.values.role,
   });
 
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -56,123 +66,22 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     values,
   } = props;
 
-  const forward = () => setCurrentStep(currentStep + 1);
 
-  const backward = () => setCurrentStep(currentStep - 1);
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-
     setFormVals({ ...formVals, ...fieldsValue });
-
-    if (currentStep < 2) {
-      forward();
-    } else {
-      handleUpdate({ ...formVals, ...fieldsValue });
-    }
+    handleUpdate({ ...formVals, ...fieldsValue });
   };
 
-  const renderContent = () => {
-    if (currentStep === 1) {
-      return (
-        <>
-          <FormItem name="target" label="监控对象">
-            <Select style={{ width: '100%' }}>
-              <Option value="0">表一</Option>
-              <Option value="1">表二</Option>
-            </Select>
-          </FormItem>
-          <FormItem name="template" label="规则模板">
-            <Select style={{ width: '100%' }}>
-              <Option value="0">规则模板一</Option>
-              <Option value="1">规则模板二</Option>
-            </Select>
-          </FormItem>
-          <FormItem name="type" label="规则类型">
-            <RadioGroup>
-              <Radio value="0">强</Radio>
-              <Radio value="1">弱</Radio>
-            </RadioGroup>
-          </FormItem>
-        </>
-      );
-    }
-    if (currentStep === 2) {
-      return (
-        <>
-          <FormItem
-            name="time"
-            label="开始时间"
-            rules={[{ required: true, message: '请选择开始时间！' }]}
-          >
-            <DatePicker
-              style={{ width: '100%' }}
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="选择开始时间"
-            />
-          </FormItem>
-          <FormItem name="frequency" label="调度周期">
-            <Select style={{ width: '100%' }}>
-              <Option value="month">月</Option>
-              <Option value="week">周</Option>
-            </Select>
-          </FormItem>
-        </>
-      );
-    }
-    return (
-      <>
-        <FormItem
-          name="name"
-          label="规则名称"
-          rules={[{ required: true, message: '请输入规则名称！' }]}
-        >
-          <Input placeholder="请输入" />
-        </FormItem>
-        <FormItem
-          name="desc"
-          label="规则描述"
-          rules={[{ required: true, message: '请输入至少五个字符的规则描述！', min: 5 }]}
-        >
-          <TextArea rows={4} placeholder="请输入至少五个字符" />
-        </FormItem>
-      </>
-    );
-  };
+ 
 
   const renderFooter = () => {
-    if (currentStep === 1) {
-      return (
-        <>
-          <Button style={{ float: 'left' }} onClick={backward}>
-            上一步
-          </Button>
-          <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
-          <Button type="primary" onClick={() => handleNext()}>
-            下一步
-          </Button>
-        </>
-      );
-    }
-    if (currentStep === 2) {
-      return (
-        <>
-          <Button style={{ float: 'left' }} onClick={backward}>
-            上一步
-          </Button>
-          <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
-          <Button type="primary" onClick={() => handleNext()}>
-            完成
-          </Button>
-        </>
-      );
-    }
     return (
       <>
-        <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
+        <Button onClick={() => handleUpdateModalVisible(false, values)}>cancel</Button>
         <Button type="primary" onClick={() => handleNext()}>
-          下一步
+          Update
         </Button>
       </>
     );
@@ -183,30 +92,202 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       width={640}
       bodyStyle={{ padding: '32px 40px 48px' }}
       destroyOnClose
-      title="规则配置"
+      title="Update User"
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={() => handleUpdateModalVisible()}
     >
-      <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
-        <Step title="基本信息" />
-        <Step title="配置规则属性" />
-        <Step title="设定调度周期" />
-      </Steps>
-      <Form
-        {...formLayout}
-        form={form}
-        initialValues={{
-          target: formVals.target,
-          template: formVals.template,
-          type: formVals.type,
-          frequency: formVals.frequency,
-          name: formVals.name,
-          desc: formVals.desc,
-        }}
-      >
-        {renderContent()}
-      </Form>
+     
+        <Form 
+         {...formLayout}
+         form={form}
+         initialValues={{
+           name: formVals.name,
+           mail: formVals.mail,
+           role: formVals.role,
+           cellNo: formVals.cellNo,
+         }}
+        >
+          
+        </Form>
+     
+          <Card bordered={false}>
+            <Form
+              hideRequiredMark
+              style={{ marginTop: 8 }}
+              form={form}
+              name="basic"
+              initialValues={{ public: '1' }}
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+              onValuesChange={onValuesChange}
+            >
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.title.label" />}
+                name="title"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'formandbasic-form.title.required' }),
+                  },
+                ]}
+              >
+                <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
+                name="parentCategories"
+              >
+                <Cascader
+                  fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+                  options={options}
+                  expandTrigger="hover"
+                  displayRender={displayRender}
+                  onChange={onChange}
+                  changeOnSelect={true}              
+                />
+              </FormItem>      
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.order.label" />}
+                name="order"
+              >
+                <Select
+                  showSearch
+                  placeholder="Select a person"
+                  optionFilterProp="children"
+                  onChange={onChangeSelect}
+                  onSearch={onSearch}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
+                </Select>
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.description.label" />}
+                name="description"
+              >
+                <TextArea
+                  style={{ minHeight: 32 }}
+                  placeholder={formatMessage({ id: 'formandbasic-form.description.placeholder' })}
+                  rows={4}
+                />
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.status.label" />}
+                name="status"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                  },
+                ]}
+              >
+                <div>
+                  <Radio.Group>
+                    <Radio value="published">
+                      <FormattedMessage id="formandbasic-form.radio.publish" />
+                    </Radio>
+                    <Radio value="unpublished">
+                      <FormattedMessage id="formandbasic-form.radio.unpublish" />
+                    </Radio>
+                  </Radio.Group>
+                </div>
+              </FormItem>
+              
+
+              <Form.Item
+                {...formItemLayout}
+                name="icon"
+                label="Icon"
+              >            
+                <Button icon={<UploadOutlined />} onClick={() => modelreq("icon")} >
+                  Click to upload
+                </Button>
+                {update.value1 ? (
+                  <Input 
+                    name="icon"
+                    prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl+"/media/image/"+update.value1}
+                  />} disabled/>
+                ) : null}
+              </Form.Item>
+
+              <Form.Item
+                {...formItemLayout}
+                name="image"
+                label="Image"
+              >            
+                <Button icon={<UploadOutlined />} onClick={() => modelreq("image")} >
+                  Click to upload
+                </Button>
+                {update.value2 ? (
+                  <Input 
+                    name="image"
+                    prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl+"/media/image/"+update.value2}
+                  />} disabled/>
+                ) : null}
+              </Form.Item>
+
+                  
+              <Form.Item
+                {...formItemLayout}
+                name="banner"
+                label="Banner"
+              >            
+                <Button icon={<UploadOutlined />} onClick={() => modelreq("banner")}>
+                  Click to upload
+                </Button>
+                {update.value3 ? (
+                  <Input 
+                    name="banner" 
+                    prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl+"/media/image/"+update.value3}
+                  />} disabled/>
+                ) : null}
+              </Form.Item>
+              <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+                <Button type="primary" htmlType="submit" loading={submitting}>
+                  <FormattedMessage id="formandbasic-form.form.submit" />
+                </Button>
+                <Button style={{ marginLeft: 8 }}>
+                  <FormattedMessage id="formandbasic-form.form.save" />
+                </Button>
+              </FormItem>
+            </Form>
+          </Card>
+
+          <Modal
+            destroyOnClose
+            title="Media Center"
+            visible={createModalVisible}
+            onCancel={() => handleModalVisible(false)}
+            //footer={null}
+            onOk={() => handleModalVisible(false)}
+            width={1000}
+          >
+            <MediaWall 
+              updateurl={(e) => getUrl(e)}
+              reqName={name}
+            >
+              
+            </MediaWall>
+              
+          </Modal>
+
+        
     </Modal>
   );
 };

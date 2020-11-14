@@ -53,26 +53,26 @@ import proSettings from '../../../../config/defaultSettings';
 //   },
 // ];
 
-function onChange(value) {
+function onChange(value: any) {
   //console.log(value);
 }
 
 // Just show the latest item.
-function displayRender(label) {
+function displayRender(label: any) {
   return label[label.length - 1];
 }
 
-function handleChange(value) {
+// function handleChange(value: any) {
+//   console.log(`selected ${value}`);
+// }
+
+
+
+function onChangeSelect(value: any) {
   console.log(`selected ${value}`);
 }
 
-
-
-function onChangeSelect(value) {
-  console.log(`selected ${value}`);
-}
-
-function onSearch(val) {
+function onSearch(val: any) {
   console.log('search:', val);
 }
 
@@ -91,10 +91,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const { submitting } = props;
   const [form] = Form.useForm();
   // const [value, updateValue] = useState<string>(null);
-  const [value1, updateValue1] = useState<string>(null);
-  const [value2, updateValue2] = useState<string>(null);
-  const [value3, updateValue3] = useState<string>(null);
-  const [name, updateName] = useState<string>(null);
+  const [value1, updateValue1] = useState<string>('');
+  const [value2, updateValue2] = useState<string>('');
+  const [value3, updateValue3] = useState<string>('');
+  const [name, updateName] = useState<string>('');
 
   const [options, setOptions] = useState([])
   useEffect(() => {
@@ -145,6 +145,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       type: 'categoryAdd/submitRegularForm',
       payload: values,
     });
+    form.resetFields();
+    updateValue1('');
+    updateValue2('');
+    updateValue3('');
   };
 
   const onFinishFailed = (errorInfo: any) => {
