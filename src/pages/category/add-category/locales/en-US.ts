@@ -69,4 +69,7 @@ export default {
   'formandbasic-form.description.label' : 'Category Description',
   'formandbasic-form.description.placeholder' : 'Product Category Description',
 
+  'formandbasic-form.slug.label': 'Slug',
+  'formandbasic-form.slug.placeholder': 'Slug',
+  'formandbasic-form.slug.required' : 'Please Select Category Slug',
 };

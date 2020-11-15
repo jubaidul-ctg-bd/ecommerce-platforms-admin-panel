@@ -1,16 +1,16 @@
-import { AppstoreAddOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Image, Popconfirm, Table, Switch, Space } from 'antd';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Dropdown, Menu, message, Image, Popconfirm, Form } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
-import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule, approvalRul, categoryQuery } from './service';
-import { history } from 'umi'
-import proSettings from '../../../../config/defaultSettings';
-import AttributeTableList from './components/attribute-list';
+// import CreateForm from './components/CreateForm';
+// import UpdateForm, { FormValueType } from './components/UpdateForm';
+import { TableListItem } from '../data.d';
+import { queryRule, updateRule, addRule, removeRule, approvalRul } from '../service';
+import { history } from 'umi';
+import proSettings from '../../../../../config/defaultSettings';
+
 
 /**
  * 添加节点
@@ -19,11 +19,11 @@ import AttributeTableList from './components/attribute-list';
 
 const handleAdd = () => {
   console.log("hello world");
+  
     history.replace({
-      pathname: '/category/add-category',
+      pathname: '/products/add-product',
     });
 }
-
 // const handleAdd = async (fields: TableListItem) => {
 //   const hide = message.loading('正在添加');
 //   try {
@@ -43,31 +43,28 @@ const handleAdd = () => {
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Updating');
+  const hide = message.loading('正在配置');
   try {
     await updateRule({
-      title: fields.title,
-      parentCategories: fields.parentCategories,
-      _id: fields._id,
-      order: fields.order,
-      description: fields.description,
-      icon: fields.icon,
-      image: fields.image,
-      banner: fields.banner,
-      status: fields.status,
-      slug: fields.slug,
+      name: fields.name,
+      desc: fields.desc,
+      key: fields.key,
     });
     hide();
 
-    message.success('Succesfully Updated');
+    message.success('配置成功');
     return true;
   } catch (error) {
     hide();
-    message.error('Update Faile');
+    message.error('配置失败请重试！');
     return false;
   }
 };
 
+/**
+ *  删除节点
+ * @param selectedRows
+ */
 
 const handleApproval = async (selectedRows: TableListItem[], status: string) => {
   const hide = message.loading('Approving');
@@ -79,42 +76,22 @@ const handleApproval = async (selectedRows: TableListItem[], status: string) => 
   try {
     await approvalRul(selectedRows, status);
     hide();
-    message.success('Approved successfully, will refresh soon');
+    message.success(status+' successfully, will refresh soon');
     return true;
   } catch (error) {
     hide();
-    message.error('Approval failed, please try again');
+    message.error(status+' failed, please try again');
     return false;
   }
 };
 
-/**
- *  删除节点
- * @param actionRef
- */
 
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-};
-
-const TableList: React.FC<{}> = () => {
-  const [checkStrictly, setCheckStrictly] = useState(false);
+const AttributeTableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
 
-  
-  
   const handleRemove = async (e: TableListItem) => {
     const hide = message.loading('Deleting');
     
@@ -133,99 +110,40 @@ const TableList: React.FC<{}> = () => {
       return false;
     }
   };
-
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: 'Title',
-      dataIndex: 'title',
+      title: 'Attribute Title',
+      dataIndex: 'attrTitle',
     },
     {
-      title: 'Slug',
-      dataIndex: 'slug',
+      title: 'Attribute Type',
+      dataIndex: 'attrType',
+      valueType: 'select',
     },
     {
-      title: 'Parent Category',
-      dataIndex: 'parentCategoryTitle',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
+      title: 'Options',
+      dataIndex: 'option',
       valueType: 'textarea',
-    },
-    // {
-    //   title: 'Price',
-    //   dataIndex: 'price',
-    //   sorter: true,
-    //   hideInForm: true,
-    //   renderText: (val: string) => `${val} TK`,
-    // },
-    // {
-    //   title: 'Quantity',
-    //   dataIndex: 'quantity',
-    //   sorter: true,
-    //   hideInForm: true,
-    // },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      hideInForm: true,
-      valueEnum: {
-        published: { text: 'Published', status: 'Success' },
-        unpublished: { text: 'Unpublished', status: 'Error' },
-      },
-    },
-    {
-      title: 'Icon',
-      dataIndex: 'icon',
-      renderText: (val: string) => (
-        <Image
-          width={40}
-          src={proSettings.baseUrl+"/media/image/"+val}  
-        />
-      ),
-    },
-    {
-      title: 'Image',
-      dataIndex: 'image',
-      renderText: (val: string) => (
-        <Image
-          width={40}
-          src={proSettings.baseUrl+"/media/image/"+val}
-        />
-      ),
-    },
-    {
-      title: 'Banner',
-      dataIndex: 'banner',
-      renderText: (val: string) => (
-        <Image
-          width={40}
-          src={proSettings.baseUrl+"/media/image/"+val}
-        />
-      ),
     },
     {
       title: 'Option',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
-
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              // handleUpdateModalVisible(true);
+              //setStepFormValues(record);
             }}
           >
             Edit
           </a>
           <Divider type="vertical" />
-
-          
           < Popconfirm title = { ` Confirm ${ "Delete" } ? ` } okText = " Yes " cancelText = " No " >   
             <a
               onClick={async () => {
-                  await handleRemove(record);
+                  //await handleRemove(record);
                   //action.reload();
                 }
               }
@@ -236,34 +154,12 @@ const TableList: React.FC<{}> = () => {
         </>
       ),
     },
-    {
-      // title: 'Option',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => (
-
-        <>
-          <a
-            onClick={() => {
-              // handleModalVisible(true)
-              // handleUpdateModalVisible(true);
-              // setStepFormValues(record);
-            }}
-          >
-            Add Attribute
-          </a>
-        </>
-      ),
-    },
   ];
 
   return (
-    <PageHeaderWrapper>
-      <Space align="center" style={{ marginBottom: 16 }}>
-        CheckStrictly: <Switch checked={checkStrictly} onChange={setCheckStrictly} />
-      </Space>
+      <>
       <ProTable<TableListItem>
-        headerTitle="Products Category"
+        headerTitle="Attribute List"
         actionRef={actionRef}
         rowKey="_id"
         toolBarRender={(action, { selectedRows }) => [
@@ -292,7 +188,7 @@ const TableList: React.FC<{}> = () => {
               }
             >
               <Button>
-                Bulk operation <DownOutlined />
+                  Bulk operation <DownOutlined />
               </Button>
             </Dropdown>
           ),
@@ -305,17 +201,87 @@ const TableList: React.FC<{}> = () => {
             </span> */}
           </div>
         )}
-        request={(params, sorter, filter) => categoryQuery({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
         columns={columns}
-        rowSelection={{ ...rowSelection, checkStrictly }}
-        // rowSelection={{}}
+        rowSelection={{}}
       />
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <AttributeTableList>
-          
-        </AttributeTableList>
+      <ProTable<TableListItem, TableListItem>
+    //     <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish}>
+    //     <Form.List
+    //       name="names"
+    //       rules={[
+    //         {
+    //           validator: async (_, names) => {
+    //             if (!names || names.length < 2) {
+    //               return Promise.reject(new Error('At least 2 passengers'));
+    //             }
+    //           },
+    //         },
+    //       ]}
+    //     >
+    //       {(fields, { add, remove }, { errors }) => (
+    //         <>
+    //           {fields.map((field, index) => (
+    //             <Form.Item
+    //               {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+    //               label={index === 0 ? 'Passengers' : ''}
+    //               required={false}
+    //               key={field.key}
+    //             >
+    //               <Form.Item
+    //                 {...field}
+    //                 validateTrigger={['onChange', 'onBlur']}
+    //                 rules={[
+    //                   {
+    //                     required: true,
+    //                     whitespace: true,
+    //                     message: "Please input passenger's name or delete this field.",
+    //                   },
+    //                 ]}
+    //                 noStyle
+    //               >
+    //                 <Input placeholder="passenger name" style={{ width: '60%' }} />
+    //               </Form.Item>
+    //               {fields.length > 1 ? (
+    //                 <MinusCircleOutlined
+    //                   className="dynamic-delete-button"
+    //                   onClick={() => remove(field.name)}
+    //                 />
+    //               ) : null}
+    //             </Form.Item>
+    //           ))}
+    //           <Form.Item>
+    //             <Button
+    //               type="dashed"
+    //               onClick={() => add()}
+    //               style={{ width: '60%' }}
+    //               icon={<PlusOutlined />}
+    //             >
+    //               Add field
+    //             </Button>
+    //             <Button
+    //               type="dashed"
+    //               onClick={() => {
+    //                 add('The head item', 0);
+    //               }}
+    //               style={{ width: '60%', marginTop: '20px' }}
+    //               icon={<PlusOutlined />}
+    //             >
+    //               Add field at head
+    //             </Button>
+    //             <Form.ErrorList errors={errors} />
+    //           </Form.Item>
+    //         </>
+    //       )}
+    //     </Form.List>
+    //     <Form.Item>
+    //       <Button type="primary" htmlType="submit">
+    //         Submit
+    //       </Button>
+    //     </Form.Item>
+    //   </Form>
 
-        {/* <ProTable<TableListItem, TableListItem>
+
           onSubmit={async (value) => {
             const success = await handleAdd(value);
             if (success) {
@@ -329,10 +295,25 @@ const TableList: React.FC<{}> = () => {
           type="form"
           columns={columns}
           rowSelection={{}}
-        /> */}
+        />
+      {/* <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
+        <ProTable<TableListItem, TableListItem>
+          onSubmit={async (value) => {
+            const success = await handleAdd(value);
+            if (success) {
+              handleModalVisible(false);
+              if (actionRef.current) {
+                actionRef.current.reload();
+              }
+            }
+          }}
+          rowKey="_id"
+          type="form"
+          columns={columns}
+          rowSelection={{}}
+        />
       </CreateForm>
       {stepFormValues && Object.keys(stepFormValues).length ? (
-        
         <UpdateForm
           onSubmit={async (value) => {
             const success = await handleUpdate(value);
@@ -351,9 +332,9 @@ const TableList: React.FC<{}> = () => {
           updateModalVisible={updateModalVisible}
           values={stepFormValues}
         />
-      ) : null}
-    </PageHeaderWrapper>
+      ) : null} */}
+    </>
   );
 };
 
-export default TableList;
+export default AttributeTableList;

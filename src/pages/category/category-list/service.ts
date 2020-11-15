@@ -15,8 +15,15 @@ export async function queryRule() {
   return {data:rqResult};
 }
 
+
+export async function categoryQuery() {
+  let rqResult = await request('/category/allchild');
+  console.log("rqResult=============", rqResult);
+  return  {data:rqResult};
+}
+
 export async function approvalRul(params: any, status: string) {  
-  return request('/category/update', {
+  return request('/category/updateList', {
     method: 'POST',
     data: {
       ...params,
@@ -49,11 +56,10 @@ export async function addRule(params: TableListParams) {
 }
 
 export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
+  return request('/category/update', {
     method: 'POST',
     data: {
       ...params,
-      method: 'update',
     },
   });
 }

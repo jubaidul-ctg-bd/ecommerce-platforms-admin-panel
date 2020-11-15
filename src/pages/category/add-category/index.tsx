@@ -206,6 +206,19 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </FormItem>
           <FormItem
             {...formItemLayout}
+            label={<FormattedMessage id="formandbasic-form.slug.label" />}
+            name="slug"
+            rules={[
+              {
+                // required: true,
+                message: formatMessage({ id: 'formandbasic-form.slug.required' }),
+              },
+            ]}
+          >
+            <Input placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
             name="parentCategories"
           >

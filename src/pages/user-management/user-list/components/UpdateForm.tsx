@@ -30,10 +30,7 @@ export interface UpdateFormProps {
   values: Partial<TableListItem>;
 }
 const FormItem = Form.Item;
-const { Step } = Steps;
-const { TextArea } = Input;
 const { Option } = Select;
-const RadioGroup = Radio.Group;
 
 export interface UpdateFormState {
   formVals: FormValueType;
