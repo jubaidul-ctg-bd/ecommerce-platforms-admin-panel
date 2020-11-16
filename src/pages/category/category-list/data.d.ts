@@ -22,6 +22,9 @@ export interface TableListItem {
   banner: string;
   slug: string 
   parentCategories: []
+  attrTitle: string;
+  attrType: string;
+  options: []
   
 }
 

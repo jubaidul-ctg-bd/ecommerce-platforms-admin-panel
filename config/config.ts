@@ -111,6 +111,12 @@ export default defineConfig({
                   path: '/category/add-category',
                   component: './category/add-category',
                 },
+                {
+                  name: 'add-attribute',
+                  icon: 'smile',
+                  path: '/category/add-attribute/',
+                  component: './category/add-attribute/',
+                },
                 // {
                 //   name: 'media-center',
                 //   icon: 'smile',

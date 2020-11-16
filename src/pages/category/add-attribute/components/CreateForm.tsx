@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal } from 'antd';
+import { AutoComplete, Modal } from 'antd';
+import autoHeight from '@/pages/dashboard/analysis/components/Charts/autoHeight';
 
 interface CreateFormProps {
   modalVisible: boolean;
@@ -12,10 +13,11 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
   return (
     <Modal
       destroyOnClose
-      title="新建规则"
+      title="Add Attribute"
       visible={modalVisible}
       onCancel={() => onCancel()}
       footer={null}
+      width={1000}
     >
       {props.children}
     </Modal>

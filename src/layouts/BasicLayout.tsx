@@ -61,7 +61,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
 
 const defaultFooterDom = (
   <DefaultFooter
-    copyright={`${new Date().getFullYear()} Ebhubon`}
+    copyright={`${new Date().getFullYear()} eBhubon`}
     links={[]}
     // {[
     //   {

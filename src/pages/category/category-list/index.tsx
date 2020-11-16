@@ -10,7 +10,6 @@ import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul, categoryQuery } from './service';
 import { history } from 'umi'
 import proSettings from '../../../../config/defaultSettings';
-import AttributeTableList from './components/attribute-list';
 
 /**
  * 添加节点
@@ -238,14 +237,20 @@ const TableList: React.FC<{}> = () => {
     },
     {
       // title: 'Option',
-      dataIndex: 'option',
+      dataIndex: 'options',
       valueType: 'option',
       render: (_, record) => (
-
         <>
           <a
             onClick={() => {
-              // handleModalVisible(true)
+              history.push({
+              pathname: '/category/add-attribute',
+              state: {
+                id: record._id,
+                category: record.title
+              },
+            });
+              //handleModalVisible(true)
               // handleUpdateModalVisible(true);
               // setStepFormValues(record);
             }}
@@ -310,10 +315,10 @@ const TableList: React.FC<{}> = () => {
         rowSelection={{ ...rowSelection, checkStrictly }}
         // rowSelection={{}}
       />
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <AttributeTableList>
+      <CreateForm onCancel={() => handleModalVisible(false)} >
+        {/* <AttributeTableList>
           
-        </AttributeTableList>
+        </AttributeTableList> */}
 
         {/* <ProTable<TableListItem, TableListItem>
           onSubmit={async (value) => {
