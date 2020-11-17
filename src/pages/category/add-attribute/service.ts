@@ -31,9 +31,9 @@ export async function approvalRul(params: any, status: string) {
 }
 
 
-export async function removeRule(params: { name: string[] }) {
+export async function removeRule(params: { id: string }) {
   //console.log("params at removeRule", params);
-  return request('/category/deleleAttribute', {
+  return request('/category/deleteAttribute', {
     method: 'POST',
     data: {
       ...params,
@@ -52,7 +52,7 @@ export async function addRule(params: TableListParams) {
 }
 
 export async function updateRule(params: TableListParams) {
-  return request('/category/update', {
+  return request('/category/attribute/update', {
     method: 'POST',
     data: {
       ...params,

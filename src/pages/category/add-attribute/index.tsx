@@ -5,11 +5,12 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 
 // import CreateForm from './components/CreateForm';
-// import UpdateForm, { FormValueType } from './components/UpdateForm';
+import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul, categoryQuery } from './service';
 import { formatMessage, FormattedMessage, history, useLocation } from 'umi';
 import proSettings from '../../../../config/defaultSettings';
+import { fromPairs } from 'lodash';
 
 /**
  * 添加节点
@@ -17,6 +18,7 @@ import proSettings from '../../../../config/defaultSettings';
  */
 
 const { Option } = Select;
+const FormItem = Form.Item;
 
 const handleAdd = () => {
   console.log("hello world");
@@ -26,41 +28,28 @@ const handleAdd = () => {
     });
 }
 
-const handleAddAttribute = async (fields: TableListItem) => {
-  console.log("Adding", fields);
-  
-  const hide = message.loading('Adding');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
-
 /**
  * 更新节点
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('Updating');
   try {
+    if(fields.attrType=='input') fields.attrOption = []
     await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
+      _id: fields._id,
+      attrTitle: fields.attrTitle,
+      attrType: fields.attrType,
+      attrOption: fields.attrOption,
+      categoriesId: fields.categoriesId,
     });
     hide();
 
-    message.success('配置成功');
+    message.success('Succesfully Updated');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('Update Faile');
     return false;
   }
 };
@@ -98,6 +87,7 @@ const AttributeTableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [attrTpyeValue, setAttrTpyeValue] = useState<string>('');
+  const [form] = Form.useForm();
   const [stepFormValues, setStepFormValues] = useState({});
   const [categoryTitle, setCategoryTitle] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
@@ -187,11 +177,13 @@ const AttributeTableList: React.FC<{}> = () => {
 
   const onFinish = async(values) => {
     values.categoryId = categoryId
+    if(!values.attrOption) {values.attrOption=[]}
     const hide = message.loading('Adding');
     try {
       await addRule({ ...values });
       hide();
       message.success('Added successfully');
+      form.resetFields();
       actionRef.current.reload();
       return true;
     } catch (error) {
@@ -224,7 +216,7 @@ const AttributeTableList: React.FC<{}> = () => {
             < Tag color = "cyan" key = { val } >  
               { val }
             </ Tag >
-          ) ) }
+          ) )  }
         </Space>
       ) ,
     },
@@ -234,17 +226,17 @@ const AttributeTableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          {/* <a
+          <a
             onClick={() => {
               console.log(record);
               
-              // handleUpdateModalVisible(true);
-              //setStepFormValues(record);
+              handleUpdateModalVisible(true);
+              setStepFormValues(record);
             }}
           >
             Edit
           </a>
-          <Divider type="vertical" /> */}
+          <Divider type="vertical" />
           < Popconfirm title = { ` Confirm ${ "Delete" } ? ` } okText = " Yes " cancelText = " No " >   
             <a
               onClick={async () => {
@@ -266,7 +258,7 @@ const AttributeTableList: React.FC<{}> = () => {
         <Card bordered={false} style={{ marginBottom: 16 }}>
           <Form name="dynamic_form_item"  onFinish={onFinish}>
             {!(categoryId && categoryTitle) ? (
-            <Form.Item
+            <FormItem
               {...formItemLayout}
               label="Category"
               name="categoriesId"
@@ -285,9 +277,9 @@ const AttributeTableList: React.FC<{}> = () => {
                 onChange={onChangeCascader}
                 changeOnSelect={true}              
               />
-            </Form.Item>   
+            </FormItem>   
             ) : null} 
-            <Form.Item
+            <FormItem
               {...formItemLayout}
               label="Attibute Title"
               name="attrTitle"
@@ -299,8 +291,8 @@ const AttributeTableList: React.FC<{}> = () => {
               ]}
             >
               <Input placeholder="Give the Attribute Title" />
-            </Form.Item>
-            <Form.Item
+            </FormItem>
+            <FormItem
               {...formItemLayout}
               label="Attibute Type"
               name="attrType"
@@ -321,7 +313,7 @@ const AttributeTableList: React.FC<{}> = () => {
                 <Option value="single-slection">Single Slection</Option>
                 <Option value="multiple-slection">Multiple Slection</Option>
             </Select>
-            </Form.Item>
+            </FormItem>
             {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
               <Form.List
                 name="attrOption"
@@ -338,13 +330,13 @@ const AttributeTableList: React.FC<{}> = () => {
                 {(fields, { add, remove }, { errors }) => (
                   <>
                     {fields.map((field, index) => (
-                      <Form.Item
+                      <FormItem
                         {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
                         label={index === 0 ? 'Options' : ''}
                         required={false}
                         key={field.key}
                       >
-                        <Form.Item
+                        <FormItem
                           {...field}
                           validateTrigger={['onChange', 'onBlur']}
                           rules={[
@@ -357,16 +349,16 @@ const AttributeTableList: React.FC<{}> = () => {
                           noStyle
                         >
                           <Input placeholder="option" style={{ width: '60%' }}/>
-                        </Form.Item>
+                        </FormItem>
                         {fields.length > 1 ? (
                           <MinusCircleOutlined
                             className="dynamic-delete-button"
                             onClick={() => remove(field.name)}
                           />
                         ) : null}
-                      </Form.Item>
+                      </FormItem>
                     ))}
-                    <Form.Item {...formItemLayoutWithOutLabel}>
+                    <FormItem {...formItemLayoutWithOutLabel}>
                       <Button
                         type="dashed"
                         onClick={() => add()}
@@ -376,32 +368,22 @@ const AttributeTableList: React.FC<{}> = () => {
                         Add option
                       </Button>
                       <Form.ErrorList errors={errors} />
-                    </Form.Item>
+                    </FormItem>
                   </>
                 )}
               </Form.List>
             ) : null} 
             
-            <Form.Item {...formItemLayoutWithOutLabel}>
-              <Button type="primary" htmlType="submit" 
-                onSubmit={async (value) => {
-                  const success = await handleAddAttribute(value);
-                  if (success) {
-                    handleModalVisible(false);
-                    if (actionRef.current) {
-                      actionRef.current.reload();
-                    }
-                  }
-                }}
-              >
+            <FormItem {...formItemLayoutWithOutLabel}>
+              <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-            </Form.Item>
+              {/* <Button style={{ marginLeft: 8 }} onClick={ () => form.resetFields()}>
+                Reset
+              </Button> */}
+            </FormItem>
         </Form>
-     
-
-         
-          </Card>
+        </Card>
         <ProTable<TableListItem>
           headerTitle="Attribute List"
           actionRef={actionRef}
@@ -466,7 +448,7 @@ const AttributeTableList: React.FC<{}> = () => {
             columns={columns}
             rowSelection={{}}
           />
-        </CreateForm>
+        </CreateForm> */}
         {stepFormValues && Object.keys(stepFormValues).length ? (
           <UpdateForm
             onSubmit={async (value) => {
@@ -486,7 +468,7 @@ const AttributeTableList: React.FC<{}> = () => {
             updateModalVisible={updateModalVisible}
             values={stepFormValues}
           />
-        ) : null} */}
+        ) : null}
       </PageHeaderWrapper>
   );
 };

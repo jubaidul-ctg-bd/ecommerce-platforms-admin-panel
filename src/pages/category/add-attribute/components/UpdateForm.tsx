@@ -8,7 +8,7 @@ import {
   Modal,
   Image,
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
 import { Cascader } from 'antd';
@@ -18,9 +18,7 @@ import proSettings from '../../../../../config/defaultSettings';
 import { TableListItem } from '../data';
 
 
-function onChange(value: any) {
-  //console.log(value);
-}
+
 
 // Just show the latest item.
 function displayRender(label: any) {
@@ -74,17 +72,15 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
+  const [attrTpyeValue, setAttrTpyeValue] = useState<string>('');
+  const [categoryTitle, setCategoryTitle] = useState<string>('');
+  const [categoryId, setCategoryId] = useState<string>('');
   const [formVals, setFormVals] = useState<FormValueType>({
-    title: props.values.title,
-    parentCategories: props.values.parentCategories,
     _id: props.values._id,
-    order: props.values.order,
-    description: props.values.description,
-    icon: props.values.icon,
-    image: props.values.image,
-    banner: props.values.banner,
-    status: props.values.status,
-    slug: props.values.slug,
+    categoriesId: props.values.categoriesId,
+    attrTitle: props.values.attrTitle,
+    attrType: props.values.attrType,
+    attrOption: props.values.attrOption,
   });
 
   const {
@@ -102,9 +98,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   },[])
 
   const setImageValue = () => {
-    updateValue1(formVals.icon || '');
-    updateValue2(formVals.image || '');
-    updateValue3(formVals.banner || '');
+    setAttrTpyeValue(formVals.attrType || '');
   }
 
   form.setFieldsValue({
@@ -119,12 +113,14 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
     setOptions(val);    
   }
 
-  const update = {
-    value1,
-    value2,
-    value3,
-    name,
-  }
+  const formItemLayoutWithOutLabel = {
+    wrapperCol: {
+      xs: { span: 24, offset: 0 },
+      sm: { span: 20, offset: 4 },
+      md: { span: 10, offset: 7 },
+    },
+  };
+
 
   const formItemLayout = {
     labelCol: {
@@ -157,6 +153,11 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
     updateValue3('');
   };
 
+  function onChange(value) {
+    setAttrTpyeValue(value);
+    console.log(`selected ${value}`);
+  }
+
   const onFinishFailed = (errorInfo: any) => {
     // eslint-disable-next-line no-console
     console.log('Failed:', errorInfo);
@@ -188,6 +189,12 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
     handleUpdate({ ...formVals, ...fieldsValue });
   };
 
+  function onChangeCascader(value) {
+    // setCategoryId(value)
+    // actionRef.current.reload();
+    console.log(`selected ${value}`);
+  }
+
  
 
   const renderFooter = () => {
@@ -216,187 +223,131 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
       <Form 
          form={form}
          initialValues={{
-            title: formVals.title,
-            parentCategories: formVals.parentCategories,
-            order: formVals.order,
-            description: formVals.description,
-            name: formVals.name,
-            icon: formVals.icon,
-            banner: formVals.banner,
-            image: formVals.image,
-            slug: formVals.slug,
+          attrTitle: formVals.attrTitle,
+          attrType: formVals.attrType,
+          attrOption: formVals.attrOption,
+          categoriesId: formVals.categoriesId,
             // status: formVals.status,
          }}
         >
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.title.label" />}
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.title.required' }),
-              },
-            ]}
-          >
-            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.slug.label" />}
-            name="slug"
-            rules={[
-              {
-                // required: true,
-                message: formatMessage({ id: 'formandbasic-form.slug.required' }),
-              },
-            ]}
-          >
-            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
-            name="parentCategories"
-          >
-            <Cascader
-              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
-              options={options}
-              expandTrigger="hover"
-              displayRender={displayRender}
-              onChange={onChange}
-              changeOnSelect={true}          
-            />
-          </FormItem>      
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.order.label" />}
-            name="order"
-          >
-            <Select
-              showSearch
-              placeholder="Select a person"
-              optionFilterProp="children"
-              onChange={onChangeSelect}
-              onSearch={onSearch}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
+          {/* {!(categoryId && categoryTitle) ? ( */}
+            <FormItem
+              {...formItemLayout}
+              label="Category"
+              name="categoriesId"
+              rules={[
+                {
+                  required: true,
+                  message: "Please, select the Category",
+                },
+              ]}
             >
-              <Option value="1">1</Option>
-              <Option value="2">2</Option>
-              <Option value="3">3</Option>
+              <Cascader
+                fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+                options={options}
+                expandTrigger="hover"
+                displayRender={displayRender}
+                onChange={onChangeCascader}
+                changeOnSelect={true}              
+              />
+            </FormItem>   
+            {/* ) : null}  */}
+            <FormItem
+              {...formItemLayout}
+              label="Attibute Title"
+              name="attrTitle"
+              rules={[
+                {
+                  required: true,
+                  message: "Please, enter the attribute title",
+                },
+              ]}
+            >
+              <Input placeholder="Give the Attribute Title" />
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="Attibute Type"
+              name="attrType"
+              rules={[
+                {
+                  required: true,
+                  message: "Please, select the attribute type",
+                },
+              ]}
+            >
+              <Select
+                showSearch
+                placeholder="Select Attribute Type"
+                optionFilterProp="children"
+                onChange={onChange}
+              >
+                <Option value="input">Input</Option>
+                <Option value="single-slection">Single Slection</Option>
+                <Option value="multiple-slection">Multiple Slection</Option>
             </Select>
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.description.label" />}
-            name="description"
-          >
-            <TextArea
-              style={{ minHeight: 32 }}
-              placeholder={formatMessage({ id: 'formandbasic-form.description.placeholder' })}
-              rows={4}
-            />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.status.label" />}
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.status.required' }),
-              },
-            ]}
-          >
-            <div>
-              <Radio.Group>
-                <Radio value="published">
-                  <FormattedMessage id="formandbasic-form.radio.publish" />
-                </Radio>
-                <Radio value="unpublished">
-                  <FormattedMessage id="formandbasic-form.radio.unpublish" />
-                </Radio>
-              </Radio.Group>
-            </div>
-          </FormItem>
-          
-
-          <Form.Item
-            {...formItemLayout}
-            name="icon"
-            label="Icon"
-          >            
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("icon")} >
-              Click to upload
-            </Button>
-            {update.value1 ? (
-              <Input 
-                name="icon"
-                prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value1}
-              />} disabled/>
-            ) : null}
-          </Form.Item>
-
-          <Form.Item
-            {...formItemLayout}
-            name="image"
-            label="Image"
-          >            
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("image")} >
-              Click to upload
-            </Button>
-            {update.value2 ? (
-              <Input 
-                name="image"
-                prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value2}
-              />} disabled/>
-            ) : null}
-          </Form.Item>
-
-              
-          <Form.Item
-            {...formItemLayout}
-            name="banner"
-            label="Banner"
-          >            
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("banner")}>
-              Click to upload
-            </Button>
-            {update.value3 ? (
-              <Input 
-                name="banner" 
-                prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value3}
-              />} disabled/>
-            ) : null}
-          </Form.Item>
+            </FormItem>
+            {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
+              <Form.List
+                name="attrOption"
+                rules={[
+                  {
+                    validator: async (_, attrOption) => {
+                      if (!attrOption || attrOption.length < 2) {
+                        return Promise.reject(new Error('At least 2 options'));
+                      }
+                    },
+                  },
+                ]}
+              >
+                {(fields, { add, remove }, { errors }) => (
+                  <>
+                    {fields.map((field, index) => (
+                      <FormItem
+                        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                        label={index === 0 ? 'Options' : ''}
+                        required={false}
+                        key={field.key}
+                      >
+                        <FormItem
+                          {...field}
+                          validateTrigger={['onChange', 'onBlur']}
+                          rules={[
+                            {
+                              required: true,
+                              whitespace: true,
+                              message: "Please input option's or delete this field.",
+                            },
+                          ]}
+                          noStyle
+                        >
+                          <Input placeholder="option" style={{ width: '60%' }}/>
+                        </FormItem>
+                        {fields.length > 1 ? (
+                          <MinusCircleOutlined
+                            className="dynamic-delete-button"
+                            onClick={() => remove(field.name)}
+                          />
+                        ) : null}
+                      </FormItem>
+                    ))}
+                    <FormItem {...formItemLayoutWithOutLabel}>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        style={{ width: '60%' }}
+                        icon={<PlusOutlined />}
+                      >
+                        Add option
+                      </Button>
+                      <Form.ErrorList errors={errors} />
+                    </FormItem>
+                  </>
+                )}
+              </Form.List>
+            ) : null}  
         </Form>
       </Card>
-
-      <Modal
-        destroyOnClose
-        title="Media Center"
-        visible={createModalVisible}
-        onCancel={() => handleModalVisible(false)}
-        //footer={null}
-        onOk={() => handleModalVisible(false)}
-        width={1000}
-      >
-        <MediaWall 
-          updateurl={(e) => getUrl(e)}
-          reqName={name}
-        >
-        </MediaWall>
-          
-      </Modal>
-
       </Modal>
   );
 };

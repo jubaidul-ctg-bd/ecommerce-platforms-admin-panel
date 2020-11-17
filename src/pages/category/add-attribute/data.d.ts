@@ -21,8 +21,11 @@ export interface TableListItem {
   banner: string; 
   banner: string;
   slug: string 
-  parentCategories: []
-  attrOption:[]
+  parentCategories: [];
+  attrOption:[];
+  categoriesId: string;
+  attrTitle: string;
+  attrType: string;
 }
 
 export interface TableListPagination {
@@ -53,7 +56,11 @@ export interface TableListParams {
   slug?: string;
   pageSize?: number;
   currentPage?: number;
-  parentCategories?: any;
+  parentCategories?: [];
+  attrOption?:[];
+  categoriesId?: string;
+  attrTitle?: string;
+  attrType?: string;
   filter?: { [key: string]: any[] };
   sorter?: { [key: string]: any };
 }

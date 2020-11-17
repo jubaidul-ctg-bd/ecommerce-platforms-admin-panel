@@ -76,18 +76,20 @@ const request = extend({
   
 });
 
-let baseUrl = defaultSettings.devBaseUrl;
-// console.log("process.env.NODE_ENV",process.env.NODE_ENV);
-if (process.env.NODE_ENV == "production"){
-  baseUrl = defaultSettings.liveBaseUrl;
-}
+
+
+// let baseUrl = defaultSettings.devBaseUrl;
+// // console.log("process.env.NODE_ENV",process.env.NODE_ENV);
+// if (process.env.NODE_ENV == "production"){
+//   baseUrl = defaultSettings.liveBaseUrl;
+// }
 
 request.interceptors.request.use((url, options) => {
   const headers = {
     'Authorization': 'Bearer '+localStorage.getItem('access_token'),
   }
   return {
-    url: baseUrl+ `${url}`,
+    url: defaultSettings.baseUrl+ `${url}`,
     options: { ...options, headers },
   };
 });

@@ -7,8 +7,10 @@ type DefaultSettings = ProSettings & {
   baseUrl: string,
 };
 
+// piash = 'http://192.168.0.107:3000'; 
+
 const func = () => {
-  const devUrl ='http://192.168.0.107:3000';
+  const devUrl ='http://192.168.0.111:3000';
   const liveUrl = 'http://api.ebhubon.com';
 
   let temp = devUrl;
@@ -34,8 +36,8 @@ const proSettings: DefaultSettings = {
   title: 'Admin Panel',
   pwa: false,
   iconfontUrl: '',
-  devBaseUrl:'http://192.168.0.107:3000',
-  liveBaseUrl:'http://api.ebhubon.com',
+  // devBaseUrl:'http://192.168.0.107:3000',
+  // liveBaseUrl:'http://api.ebhubon.com',
   baseUrl: func(),
 };
 
