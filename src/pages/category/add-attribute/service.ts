@@ -9,19 +9,19 @@ import { TableListParams } from './data.d';
 // }
 
 export async function queryRule(params?: TableListParams, categoryId?: string) {
-  let rqResult = await request('/category/attributeList/'+categoryId);
+  let rqResult = await request('/term/attributeList/');
   return {data:rqResult};
 }
 
 
 export async function categoryQuery() {
-  let rqResult = request('/category/showParentCategory');
+  let rqResult = request('/term/showParentCategory');
   console.log("rqResult=============", rqResult);
   return rqResult;
 }
 
 export async function approvalRul(params: any, status: string) {  
-  return request('/category/updateList', {
+  return request('/term/updateList', {
     method: 'POST',
     data: {
       ...params,
@@ -33,17 +33,16 @@ export async function approvalRul(params: any, status: string) {
 
 export async function removeRule(params: { id: string }) {
   //console.log("params at removeRule", params);
-  return request('/category/deleteAttribute', {
+  return request('/term/deleteAttribute', {
     method: 'POST',
     data: {
       ...params,
-      method: 'delete',
     },
   });
 }
 
 export async function addRule(params: TableListParams) {
-  return request('/category/attributeCreate', {
+  return request('/term/createTerm', {
     method: 'POST',
     data: {
       ...params,
@@ -52,7 +51,7 @@ export async function addRule(params: TableListParams) {
 }
 
 export async function updateRule(params: TableListParams) {
-  return request('/category/attribute/update', {
+  return request('/term/attribute/update', {
     method: 'POST',
     data: {
       ...params,

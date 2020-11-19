@@ -10,7 +10,7 @@ type DefaultSettings = ProSettings & {
 // piash = 'http://192.168.0.107:3000'; 
 
 const func = () => {
-  const devUrl ='http://192.168.0.111:3000';
+  const devUrl ='http://192.168.0.13:3000';
   const liveUrl = 'http://api.ebhubon.com';
 
   let temp = devUrl;

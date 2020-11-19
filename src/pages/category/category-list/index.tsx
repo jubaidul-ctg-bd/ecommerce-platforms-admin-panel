@@ -1,5 +1,5 @@
 import { AppstoreAddOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Image, Popconfirm, Table, Switch, Space } from 'antd';
+import { Button, Divider, Dropdown, Menu, message, Image, Popconfirm, Table, Switch, Space, Modal } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -10,6 +10,7 @@ import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul, categoryQuery } from './service';
 import { history } from 'umi'
 import proSettings from '../../../../config/defaultSettings';
+import AddAttribute from './components/AddAttribute';
 
 /**
  * 添加节点
@@ -47,7 +48,7 @@ const handleUpdate = async (fields: FormValueType) => {
     await updateRule({
       title: fields.title,
       parentCategories: fields.parentCategories,
-      _id: fields._id,
+      id: fields.id,
       order: fields.order,
       description: fields.description,
       icon: fields.icon,
@@ -111,6 +112,8 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
+  const [attributeModel, handleattributeModel] = useState<boolean>(false);
+
 
   
   
@@ -120,7 +123,7 @@ const TableList: React.FC<{}> = () => {
     if (!e) return true;
     try {
       await removeRule({
-        id: e._id,
+        id: e.id,
       });
       actionRef.current.reload();
       hide();
@@ -142,10 +145,10 @@ const TableList: React.FC<{}> = () => {
       title: 'Slug',
       dataIndex: 'slug',
     },
-    {
-      title: 'Parent Category',
-      dataIndex: 'parentCategoryTitle',
-    },
+    // {
+    //   title: 'Parent Category',
+    //   dataIndex: 'parentCategoryTitle',
+    // },
     {
       title: 'Description',
       dataIndex: 'description',
@@ -243,14 +246,15 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              history.push({
-              pathname: '/category/add-attribute',
-              state: {
-                id: record._id,
-                category: record.title
-              },
-            });
-              //handleModalVisible(true)
+            //   history.push({
+            //   pathname: '/category/add-attribute',
+            //   state: {
+            //     id: record.id,
+            //     category: record.title
+            //   },
+            // });
+            
+              handleattributeModel(true)
               // handleUpdateModalVisible(true);
               // setStepFormValues(record);
             }}
@@ -269,8 +273,9 @@ const TableList: React.FC<{}> = () => {
       </Space>
       <ProTable<TableListItem>
         headerTitle="Products Category"
+        childrenColumnName="childTermValues"
         actionRef={actionRef}
-        rowKey="_id"
+        rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
           <Button type="primary" onClick={() => handleAdd()}>
             <PlusOutlined /> Add
@@ -315,6 +320,20 @@ const TableList: React.FC<{}> = () => {
         rowSelection={{ ...rowSelection, checkStrictly }}
         // rowSelection={{}}
       />
+
+
+        <Modal
+          width={640}
+          bodyStyle={{ padding: '32px 40px 48px' }}
+          destroyOnClose
+          title="Update User"
+          visible={attributeModel}
+          // footer={renderFooter()}
+          onCancel={() => handleattributeModel(false)}
+        >
+          <AddAttribute></AddAttribute>
+        </Modal>
+
       <CreateForm onCancel={() => handleModalVisible(false)} >
         {/* <AttributeTableList>
           
@@ -330,7 +349,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="_id"
+          rowKey="id"
           type="form"
           columns={columns}
           rowSelection={{}}

@@ -223,7 +223,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             name="parentCategories"
           >
             <Cascader
-              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+              fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}

@@ -46,7 +46,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const [formVals, setFormVals] = useState<FormValueType>({
     name: props.values.name,
     mail: props.values.mail,
-    _id: props.values._id,
+    id: props.values.id,
     cellNo: props.values.cellNo,
     role: props.values.role,
   });

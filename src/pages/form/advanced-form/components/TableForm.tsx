@@ -45,7 +45,7 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
     const newData = data?.map((item) => ({ ...item })) || [];
 
     newData.push({
-      key: `NEW_TEMP_ID_${index}`,
+      key: `NEW_TEMPid_${index}`,
       workId: '',
       name: '',
       department: '',

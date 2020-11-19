@@ -84,7 +84,7 @@ const TableList: React.FC<{}> = () => {
     if (!e) return true;
     try {
       await removeRule({
-        id: e._id,
+        id: e.id,
       });
       actionRef.current.reload();
       hide();
@@ -171,7 +171,7 @@ const TableList: React.FC<{}> = () => {
       <ProTable<TableListItem>
         headerTitle="Seller List"
         actionRef={actionRef}
-        rowKey="_id"
+        rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
           // <Button type="primary" onClick={() => handleModalVisible(true)}>
           //   <PlusOutlined />  ADD
@@ -231,7 +231,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="_id"
+          rowKey="id"
           type="form"
           columns={columns}
           rowSelection={{}}

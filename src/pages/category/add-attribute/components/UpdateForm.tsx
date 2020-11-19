@@ -76,11 +76,11 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [categoryTitle, setCategoryTitle] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
   const [formVals, setFormVals] = useState<FormValueType>({
-    _id: props.values._id,
-    categoriesId: props.values.categoriesId,
-    attrTitle: props.values.attrTitle,
-    attrType: props.values.attrType,
-    attrOption: props.values.attrOption,
+    id: props.values.id,
+    // categoriesId: props.values.categoriesId,
+    title: props.values.title,
+    type: props.values.type,
+    // attrOption: props.values.attrOption,
   });
 
   const {
@@ -223,15 +223,15 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
       <Form 
          form={form}
          initialValues={{
-          attrTitle: formVals.attrTitle,
-          attrType: formVals.attrType,
-          attrOption: formVals.attrOption,
-          categoriesId: formVals.categoriesId,
+          title: formVals.title,
+          type: formVals.type,
+          // attrOption: formVals.attrOption,
+          // categoriesId: formVals.categoriesId,
             // status: formVals.status,
          }}
         >
           {/* {!(categoryId && categoryTitle) ? ( */}
-            <FormItem
+            {/* <FormItem
               {...formItemLayout}
               label="Category"
               name="categoriesId"
@@ -243,19 +243,19 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
               ]}
             >
               <Cascader
-                fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+                fieldNames={{ label: 'title', value: 'id', children: 'children' }}
                 options={options}
                 expandTrigger="hover"
                 displayRender={displayRender}
                 onChange={onChangeCascader}
                 changeOnSelect={true}              
               />
-            </FormItem>   
+            </FormItem>    */}
             {/* ) : null}  */}
             <FormItem
               {...formItemLayout}
               label="Attibute Title"
-              name="attrTitle"
+              name="title"
               rules={[
                 {
                   required: true,
@@ -268,7 +268,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
             <FormItem
               {...formItemLayout}
               label="Attibute Type"
-              name="attrType"
+              name="type"
               rules={[
                 {
                   required: true,
@@ -282,9 +282,9 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
                 optionFilterProp="children"
                 onChange={onChange}
               >
-                <Option value="input">Input</Option>
-                <Option value="single-slection">Single Slection</Option>
-                <Option value="multiple-slection">Multiple Slection</Option>
+                <Option value="text">Text</Option>
+                <Option value="single-choice">Single Choice</Option>
+                <Option value="multiple-choice">Multiple Choice</Option>
             </Select>
             </FormItem>
             {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (

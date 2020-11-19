@@ -37,11 +37,11 @@ const handleUpdate = async (fields: FormValueType) => {
   try {
     if(fields.attrType=='input') fields.attrOption = []
     await updateRule({
-      _id: fields._id,
-      attrTitle: fields.attrTitle,
-      attrType: fields.attrType,
-      attrOption: fields.attrOption,
-      categoriesId: fields.categoriesId,
+      id: fields.id,
+      title: fields.title,
+      type: fields.type,
+      // attrOption: fields.attrOption,
+      // categoriesId: fields.categoriesId,
     });
     hide();
 
@@ -128,7 +128,7 @@ const AttributeTableList: React.FC<{}> = () => {
     if (!e) return true;
     try {
       await removeRule({
-        id: e._id,
+        id: e.id,
       });
       actionRef.current.reload();
       hide();
@@ -196,30 +196,30 @@ const AttributeTableList: React.FC<{}> = () => {
   const columns: ProColumns<TableListItem>[] = [
     {
       title: 'Attribute Title',
-      dataIndex: 'attrTitle',
+      dataIndex: 'title',
     },
     {
       title: 'Attribute Type',
-      dataIndex: 'attrType',
+      dataIndex: 'type',
       valueEnum: {
-        'input': { text: 'Input' },
-        'single-slection': { text: 'Single Selection' },
-        'multiple-selection': { text: 'Multiple Selection' },
+        'text': { text: 'Text' },
+        'single-choice': { text: 'Single Choice' },
+        'multiple-choice': { text: 'Multiple Choice' },
       },
     },
-    {
-      title: 'Attribute Options',
-      dataIndex: 'attrOption',
-      render : ( _ , row ) => (   
-        <Space>
-          { row.attrOption.map ( ( val ) => (  
-            < Tag color = "cyan" key = { val } >  
-              { val }
-            </ Tag >
-          ) )  }
-        </Space>
-      ) ,
-    },
+    // {
+    //   title: 'Attribute Options',
+    //   dataIndex: 'attrOption',
+    //   render : ( _ , row ) => (   
+    //     <Space>
+    //       { row.attrOption.map ( ( val ) => (  
+    //         < Tag color = "cyan" key = { val } >  
+    //           { val }
+    //         </ Tag >
+    //       ) )  }
+    //     </Space>
+    //   ) ,
+    // },
     {
       title: 'Option',
       dataIndex: 'option',
@@ -254,10 +254,10 @@ const AttributeTableList: React.FC<{}> = () => {
   ];
 
   return (
-      <PageHeaderWrapper title={"Add "+categoryTitle+" Category Attribute"} content={""} extraContent={""}>
+      <PageHeaderWrapper>
         <Card bordered={false} style={{ marginBottom: 16 }}>
           <Form name="dynamic_form_item"  onFinish={onFinish}>
-            {!(categoryId && categoryTitle) ? (
+            {/* {!(categoryId && categoryTitle) ? (
             <FormItem
               {...formItemLayout}
               label="Category"
@@ -270,7 +270,7 @@ const AttributeTableList: React.FC<{}> = () => {
               ]}
             >
               <Cascader
-                fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+                fieldNames={{ label: 'title', value: 'id', children: 'children' }}
                 options={options}
                 expandTrigger="hover"
                 displayRender={displayRender}
@@ -278,11 +278,11 @@ const AttributeTableList: React.FC<{}> = () => {
                 changeOnSelect={true}              
               />
             </FormItem>   
-            ) : null} 
+            ) : null}  */}
             <FormItem
               {...formItemLayout}
               label="Attibute Title"
-              name="attrTitle"
+              name="title"
               rules={[
                 {
                   required: true,
@@ -295,7 +295,7 @@ const AttributeTableList: React.FC<{}> = () => {
             <FormItem
               {...formItemLayout}
               label="Attibute Type"
-              name="attrType"
+              name="type"
               rules={[
                 {
                   required: true,
@@ -309,12 +309,13 @@ const AttributeTableList: React.FC<{}> = () => {
                 optionFilterProp="children"
                 onChange={onChange}
               >
-                <Option value="input">Input</Option>
-                <Option value="single-slection">Single Slection</Option>
-                <Option value="multiple-slection">Multiple Slection</Option>
+                <Option value="text">Text</Option>
+                <Option value="single-choice">Single Choice</Option>
+                <Option value="multiple-choice">Multiple Choice</Option>
             </Select>
             </FormItem>
-            {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
+
+            {/* {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
               <Form.List
                 name="attrOption"
                 rules={[
@@ -373,7 +374,7 @@ const AttributeTableList: React.FC<{}> = () => {
                 )}
               </Form.List>
             ) : null} 
-            
+             */}
             <FormItem {...formItemLayoutWithOutLabel}>
               <Button type="primary" htmlType="submit">
                 Submit
@@ -387,7 +388,7 @@ const AttributeTableList: React.FC<{}> = () => {
         <ProTable<TableListItem>
           headerTitle="Attribute List"
           actionRef={actionRef}
-          rowKey="_id"
+          rowKey="id"
           toolBarRender={(action, { selectedRows }) => [
             // <Button type="primary" onClick={() => handleAdd()}>
             //   <PlusOutlined /> Add
@@ -443,7 +444,7 @@ const AttributeTableList: React.FC<{}> = () => {
                 }
               }
             }}
-            rowKey="_id"
+            rowKey="id"
             type="form"
             columns={columns}
             rowSelection={{}}

@@ -22,9 +22,9 @@ export default {
   
 
   'menu.category': 'Product Category',
-  'menu.category.category-list': 'Category List', 
+  'menu.category.category-list': 'Categories', 
   'menu.category.add-category': 'Add Category',  
-  'menu.category.add-attribute': 'Add Category Attribute',  
+  'menu.category.add-attribute': 'Attributes',  
   'menu.category.media-center': 'Media Center', 
   'menu.category.select': 'Select',
 

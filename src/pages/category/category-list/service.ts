@@ -10,20 +10,18 @@ import { TableListParams } from './data.d';
 
 export async function queryRule() {
   console.log("params at queryRule");
-  let rqResult = await request('/category/all');
-  console.log("rqResult=============", rqResult);
+  let rqResult = await request('/term/all');
   return {data:rqResult};
 }
 
 
 export async function categoryQuery() {
-  let rqResult = await request('/category/allchild');
-  console.log("rqResult=============", rqResult);
+  let rqResult = await request('/term/allchild');
   return  {data:rqResult};
 }
 
 export async function approvalRul(params: any, status: string) {  
-  return request('/category/updateList', {
+  return request('/term/updateList', {
     method: 'POST',
     data: {
       ...params,
@@ -36,7 +34,7 @@ export async function approvalRul(params: any, status: string) {
 export async function removeRule(params: { id: string }) {
   console.log("params=======", params);
   
-  return request('/category/delete', {
+  return request('/term/delete', {
     method: 'POST',
     data: {
       ...params,
@@ -56,10 +54,18 @@ export async function addRule(params: TableListParams) {
 }
 
 export async function updateRule(params: TableListParams) {
-  return request('/category/update', {
+  return request('/term/update', {
     method: 'POST',
     data: {
       ...params,
     },
   });
+}
+
+
+export async function queryAttributes(params?: TableListParams) {
+  let rqResult = await request('/term/attributeList/');
+  console.log(rqResult);
+  
+  return rqResult
 }

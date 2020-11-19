@@ -11,7 +11,7 @@ export interface TableListItem {
   updatedAt: Date;
   createdAt: Date;
   progress: number;
-  _id:string;
+  id:string;
   title: string;
   parentCategoryTitle: string;
   order: string;
@@ -26,6 +26,7 @@ export interface TableListItem {
   categoriesId: string;
   attrTitle: string;
   attrType: string;
+  type: string;
 }
 
 export interface TableListPagination {
@@ -41,7 +42,7 @@ export interface TableListData {
 }
 
 export interface TableListParams {
-  _id?:string;
+  id?:string;
   status?: string;
   name?: string;
   desc?: string;
@@ -59,6 +60,7 @@ export interface TableListParams {
   parentCategories?: [];
   attrOption?:[];
   categoriesId?: string;
+  type?:string;
   attrTitle?: string;
   attrType?: string;
   filter?: { [key: string]: any[] };

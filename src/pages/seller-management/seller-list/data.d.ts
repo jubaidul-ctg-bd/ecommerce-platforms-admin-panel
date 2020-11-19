@@ -1,6 +1,6 @@
 export interface TableListItem {
   key: number;
-  _id: string;
+  id: string;
   disabled?: boolean;
   href: string;
   avatar: string;
@@ -30,7 +30,7 @@ export interface TableListItem {
   UpdatedAt: string;
   
   user:users
-  user_id:ObjectID;
+  userid:ObjectID;
 }
 
 export interface TableListPagination {
@@ -50,7 +50,7 @@ export interface TableListParams {
   desc?: string;
   key?: number;
 
-  _id?: string;
+  id?: string;
 
   shopName?: string;
   username?:string;
@@ -68,7 +68,7 @@ export interface TableListParams {
   UpdatedAt?: string;
   
   user?:users
-  user_id?:ObjectID;
+  userid?:ObjectID;
 
   pageSize?: number;
   currentPage?: number;

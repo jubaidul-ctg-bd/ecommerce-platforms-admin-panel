@@ -33,7 +33,7 @@ const handleUpdate = async (fields: FormValueType) => {
     await updateRule({
       name: fields.name,
       mail: fields.mail,
-      _id: fields._id,
+      id: fields.id,
       role: fields.role,
       cellNo: fields.cellNo,
     });
@@ -83,7 +83,7 @@ const TableList: React.FC<{}> = () => {
     if (!e) return true;
     try {
       await removeRule({
-        id: e._id,
+        id: e.id,
       });
       actionRef.current.reload();
       hide();
@@ -168,7 +168,7 @@ const TableList: React.FC<{}> = () => {
       <ProTable<TableListItem>
         headerTitle="All User"
         actionRef={actionRef}
-        rowKey="_id"
+        rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
           <Button type="primary" onClick={() => handleAdd()}>
             <PlusOutlined />  ADD
@@ -228,7 +228,7 @@ const TableList: React.FC<{}> = () => {
               }
             }
           }}
-          rowKey="_id"
+          rowKey="id"
           type="form"
           columns={columns}
           rowSelection={{}}

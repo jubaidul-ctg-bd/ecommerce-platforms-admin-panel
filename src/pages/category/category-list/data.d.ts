@@ -11,7 +11,7 @@ export interface TableListItem {
   updatedAt: Date;
   createdAt: Date;
   progress: number;
-  _id:string;
+  id:string;
   title: string;
   parentCategoryTitle: string;
   order: string;
@@ -21,7 +21,8 @@ export interface TableListItem {
   banner: string; 
   banner: string;
   slug: string 
-  parentCategories: []
+  parentTermValue: any
+  parentCategories: any
   attrTitle: string;
   attrType: string;
   options: []
@@ -41,13 +42,14 @@ export interface TableListData {
 }
 
 export interface TableListParams {
-  _id?:string;
+  id?:string;
   status?: string;
   name?: string;
   desc?: string;
   key?: number;
   title?: string;
   parentCategoryTitle?: string;
+  parentCategories?: any
   order?: string;
   description?: string;
   icon?: string;
@@ -56,7 +58,7 @@ export interface TableListParams {
   slug?: string;
   pageSize?: number;
   currentPage?: number;
-  parentCategories?: any;
+  parentTermValue?: any;
   filter?: { [key: string]: any[] };
   sorter?: { [key: string]: any };
 }

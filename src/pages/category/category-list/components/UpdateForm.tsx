@@ -76,8 +76,8 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [name, updateName] = useState<string>('');
   const [formVals, setFormVals] = useState<FormValueType>({
     title: props.values.title,
-    parentCategories: props.values.parentCategories,
-    _id: props.values._id,
+    parentCategories: props.values.parentTermValue,
+    id: props.values.id,
     order: props.values.order,
     description: props.values.description,
     icon: props.values.icon,
@@ -260,7 +260,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
             name="parentCategories"
           >
             <Cascader
-              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+              fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
