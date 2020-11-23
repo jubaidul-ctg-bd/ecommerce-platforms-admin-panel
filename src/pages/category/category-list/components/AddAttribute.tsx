@@ -1,8 +1,6 @@
-import { Modal, Transfer } from 'antd';
+import { message, Transfer } from 'antd';
 import React from 'react';
-import { queryAttributes } from '../service';
-
-
+import { associateTerm, queryAttributes } from '../service';
 
 class AddAttribute extends React.Component {
   state = {
@@ -10,43 +8,42 @@ class AddAttribute extends React.Component {
     targetKeys: [],
   };
 
-  
-  
   componentDidMount() {
     this.getMock();
   }
 
-
-  getMock = () => {
-    const temp = async() => {
-      let val = await queryAttributes()
-      this.setState({ mockData: val });
-    }
+  getMock = async() => {
     const targetKeys = [];
-    const mockData = temp;
+    const mockData = await queryAttributes();
 
-    
-    //queryAttributes()
+    const data = this.props.values.terms;
 
-    // for (let i = 0; i < 20; i++) {
-    //   const data = {
-    //     key: i.toString(),
-    //     title: `content${i + 1}`,
-    //     description: `description of content${i + 1}`,
-    //     chosen: Math.random() * 2 > 1,
-    //   };
-    //   if (data.chosen) {
-    //     targetKeys.push(data.key);
-    //   }
-    //   mockData.push(data);
-    // }
-    this.setState({ targetKeys });
+    this.props.values.terms.forEach(element => {
+      if(element.isDynamic) targetKeys.push(element.id);
+    });
+       
+    this.setState({ mockData, targetKeys });
   };
 
-  filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
+  // filterOption = (inputValue, option) => option.description.indexOf(inputValue) > -1;
 
-  handleChange = targetKeys => {
+  handleChange = async(targetKeys) => {
+
+    let value = this.props.values;
     this.setState({ targetKeys });
+    value.associateTerm = targetKeys;
+
+    const hide = message.loading('Submitting');
+    try {
+      await associateTerm({ ...value });
+      hide();
+      message.success('Submitted Succesfully');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Submit Faild!');
+      return false;
+    }
   };
 
   handleSearch = (dir, value) => {
@@ -55,19 +52,17 @@ class AddAttribute extends React.Component {
 
   render() {
     return (
-      
-        <Transfer
-          dataSource={this.state.mockData}
-          showSearch
-          filterOption={this.filterOption}
-          targetKeys={this.state.targetKeys}
-          onChange={this.handleChange}
-          onSearch={this.handleSearch}
-          render={item => item.title}
-        />
+      <Transfer
+        dataSource={this.state.mockData}
+        showSearch
+        rowKey={record => record.id}
+        // filterOption={this.filterOption}
+        targetKeys={this.state.targetKeys}
+        onChange={this.handleChange}
+        onSearch={this.handleSearch}
+        render={item => item.title}
+      />
     );
   }
 }
-
-
 export default AddAttribute;

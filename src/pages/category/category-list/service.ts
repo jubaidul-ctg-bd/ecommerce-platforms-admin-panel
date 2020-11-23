@@ -65,7 +65,18 @@ export async function updateRule(params: TableListParams) {
 
 export async function queryAttributes(params?: TableListParams) {
   let rqResult = await request('/term/attributeList/');
-  console.log(rqResult);
+  // console.log(rqResult);
   
   return rqResult
 }
+
+
+export async function associateTerm(params: TableListParams) {
+  return request('/term/associateTerm', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+

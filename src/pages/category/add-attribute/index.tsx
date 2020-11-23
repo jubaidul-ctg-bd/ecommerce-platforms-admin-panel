@@ -11,6 +11,7 @@ import { queryRule, updateRule, addRule, removeRule, approvalRul, categoryQuery 
 import { formatMessage, FormattedMessage, history, useLocation } from 'umi';
 import proSettings from '../../../../config/defaultSettings';
 import { fromPairs } from 'lodash';
+import CreateForm from './components/CreateForm';
 
 /**
  * 添加节点
@@ -35,12 +36,12 @@ const handleAdd = () => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('Updating');
   try {
-    if(fields.attrType=='input') fields.attrOption = []
+    if(fields.attrType=='text') fields.attrOption = []
     await updateRule({
       id: fields.id,
       title: fields.title,
       type: fields.type,
-      // attrOption: fields.attrOption,
+      attrOption: fields.attrOption,
       // categoriesId: fields.categoriesId,
     });
     hide();
@@ -49,7 +50,7 @@ const handleUpdate = async (fields: FormValueType) => {
     return true;
   } catch (error) {
     hide();
-    message.error('Update Faile');
+    message.error('Update Failed');
     return false;
   }
 };
@@ -182,6 +183,7 @@ const AttributeTableList: React.FC<{}> = () => {
     try {
       await addRule({ ...values });
       hide();
+      handleModalVisible(false)
       message.success('Added successfully');
       form.resetFields();
       actionRef.current.reload();
@@ -207,19 +209,19 @@ const AttributeTableList: React.FC<{}> = () => {
         'multiple-choice': { text: 'Multiple Choice' },
       },
     },
-    // {
-    //   title: 'Attribute Options',
-    //   dataIndex: 'attrOption',
-    //   render : ( _ , row ) => (   
-    //     <Space>
-    //       { row.attrOption.map ( ( val ) => (  
-    //         < Tag color = "cyan" key = { val } >  
-    //           { val }
-    //         </ Tag >
-    //       ) )  }
-    //     </Space>
-    //   ) ,
-    // },
+    {
+      title: 'Attribute Options',
+      dataIndex: 'termValues',
+      render : ( _ , row ) => (   
+        <Space>
+          { row.termValues.map ( ( val ) => (  
+            < Tag color = "cyan" key = { val } >  
+              { val.title }
+            </ Tag >
+          ) )  }
+        </Space>
+      ) ,
+    },
     {
       title: 'Option',
       dataIndex: 'option',
@@ -255,6 +257,55 @@ const AttributeTableList: React.FC<{}> = () => {
 
   return (
       <PageHeaderWrapper>
+        <ProTable<TableListItem>
+          headerTitle="Attribute List"
+          actionRef={actionRef}
+          rowKey="id"
+          toolBarRender={(action, { selectedRows }) => [
+            <Button type="primary" onClick={() => handleModalVisible(true)}>
+              <PlusOutlined /> Add
+            </Button>,
+            selectedRows && selectedRows.length > 0 && (
+              <Dropdown
+                overlay={
+                  <Menu
+                    onClick={async (e) => {
+                      if (e.key === 'Publish') {
+                        await handleApproval(selectedRows, "published");
+                        action.reload();
+                      }
+                      if (e.key === 'Unpublish') {
+                        await handleApproval(selectedRows, "unpublished");
+                        action.reload();
+                      }
+                    }}
+                    selectedKeys={[]}
+                  >
+                    <Menu.Item key="Publish">Publish</Menu.Item>
+                    <Menu.Item key="Unpublish">Unpublish</Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button>
+                    Bulk operation <DownOutlined />
+                </Button>
+              </Dropdown>
+            ),
+          ]}
+          tableAlertRender={({ selectedRowKeys, selectedRows }) => (
+            <div>
+              Chosen <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> item&nbsp;&nbsp;
+              {/* <span>
+              Total number of service calls {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} Ten thousand
+              </span> */}
+            </div>
+          )}
+          request={(params, sorter, filter) => queryRule({ ...params, sorter, filter }, categoryId)}
+          columns={columns}
+          rowSelection={{}}
+        />
+        
+        <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
         <Card bordered={false} style={{ marginBottom: 16 }}>
           <Form name="dynamic_form_item"  onFinish={onFinish}>
             {/* {!(categoryId && categoryTitle) ? (
@@ -315,7 +366,7 @@ const AttributeTableList: React.FC<{}> = () => {
             </Select>
             </FormItem>
 
-            {/* {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
+            {attrTpyeValue=='single-choice' || attrTpyeValue=='multiple-choice' ? (
               <Form.List
                 name="attrOption"
                 rules={[
@@ -374,7 +425,7 @@ const AttributeTableList: React.FC<{}> = () => {
                 )}
               </Form.List>
             ) : null} 
-             */}
+            
             <FormItem {...formItemLayoutWithOutLabel}>
               <Button type="primary" htmlType="submit">
                 Submit
@@ -385,71 +436,8 @@ const AttributeTableList: React.FC<{}> = () => {
             </FormItem>
         </Form>
         </Card>
-        <ProTable<TableListItem>
-          headerTitle="Attribute List"
-          actionRef={actionRef}
-          rowKey="id"
-          toolBarRender={(action, { selectedRows }) => [
-            // <Button type="primary" onClick={() => handleAdd()}>
-            //   <PlusOutlined /> Add
-            // </Button>,
-            selectedRows && selectedRows.length > 0 && (
-              <Dropdown
-                overlay={
-                  <Menu
-                    onClick={async (e) => {
-                      if (e.key === 'Publish') {
-                        await handleApproval(selectedRows, "published");
-                        action.reload();
-                      }
-                      if (e.key === 'Unpublish') {
-                        await handleApproval(selectedRows, "unpublished");
-                        action.reload();
-                      }
-                    }}
-                    selectedKeys={[]}
-                  >
-                    <Menu.Item key="Publish">Publish</Menu.Item>
-                    <Menu.Item key="Unpublish">Unpublish</Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button>
-                    Bulk operation <DownOutlined />
-                </Button>
-              </Dropdown>
-            ),
-          ]}
-          tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-            <div>
-              Chosen <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> item&nbsp;&nbsp;
-              {/* <span>
-              Total number of service calls {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} Ten thousand
-              </span> */}
-            </div>
-          )}
-          request={(params, sorter, filter) => queryRule({ ...params, sorter, filter }, categoryId)}
-          columns={columns}
-          rowSelection={{}}
-        />
         
-        {/* <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-          <ProTable<TableListItem, TableListItem>
-            onSubmit={async (value) => {
-              const success = await handleAdd(value);
-              if (success) {
-                handleModalVisible(false);
-                if (actionRef.current) {
-                  actionRef.current.reload();
-                }
-              }
-            }}
-            rowKey="id"
-            type="form"
-            columns={columns}
-            rowSelection={{}}
-          />
-        </CreateForm> */}
+        </CreateForm>
         {stepFormValues && Object.keys(stepFormValues).length ? (
           <UpdateForm
             onSubmit={async (value) => {

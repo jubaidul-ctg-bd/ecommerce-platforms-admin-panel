@@ -10,6 +10,7 @@ import { TableListParams } from './data.d';
 
 export async function queryRule(params?: TableListParams, categoryId?: string) {
   let rqResult = await request('/term/attributeList/');
+  console.log("rqResult", rqResult);
   return {data:rqResult};
 }
 

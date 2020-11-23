@@ -256,7 +256,7 @@ const TableList: React.FC<{}> = () => {
             
               handleattributeModel(true)
               // handleUpdateModalVisible(true);
-              // setStepFormValues(record);
+              setStepFormValues(record);
             }}
           >
             Add Attribute
@@ -322,17 +322,26 @@ const TableList: React.FC<{}> = () => {
       />
 
 
-        <Modal
-          width={640}
-          bodyStyle={{ padding: '32px 40px 48px' }}
-          destroyOnClose
-          title="Update User"
-          visible={attributeModel}
-          // footer={renderFooter()}
-          onCancel={() => handleattributeModel(false)}
-        >
-          <AddAttribute></AddAttribute>
-        </Modal>
+      <Modal
+        width={640}
+        bodyStyle={{ padding: '32px 40px 48px' }}
+        destroyOnClose
+        title="Associate Attributes"
+        visible={attributeModel}
+        // footer={renderFooter()}
+        //footer={false}
+        onCancel={() => handleattributeModel(false)}
+        onOk={() => {
+          if (actionRef.current) {
+            actionRef.current.reload();
+          } 
+          handleattributeModel(false);
+        }}
+      >
+        <AddAttribute
+          values={stepFormValues}
+        />
+      </Modal>
 
       <CreateForm onCancel={() => handleModalVisible(false)} >
         {/* <AttributeTableList>

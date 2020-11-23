@@ -75,12 +75,13 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [attrTpyeValue, setAttrTpyeValue] = useState<string>('');
   const [categoryTitle, setCategoryTitle] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
+  const [attrOp, setAttrOp] = useState([]);
   const [formVals, setFormVals] = useState<FormValueType>({
     id: props.values.id,
     // categoriesId: props.values.categoriesId,
     title: props.values.title,
     type: props.values.type,
-    // attrOption: props.values.attrOption,
+    attrOption: [],
   });
 
   const {
@@ -98,7 +99,15 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   },[])
 
   const setImageValue = () => {
-    setAttrTpyeValue(formVals.attrType || '');
+    setAttrTpyeValue(formVals.type || '');
+    
+   // let options = []
+
+    for(let i=0; i<props.values.termValues.length; i++)
+    {
+      console.log("element", props.values.termValues[i]);
+      attrOp.push(props.values.termValues[i].title);
+    }
   }
 
   form.setFieldsValue({
@@ -106,7 +115,6 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
     image: value2,
     banner: value3,
   });   
-  console.log(value1, value2, value3);
   
   const getOptions = async() => {
     let val = await categoryQuery();
@@ -192,6 +200,8 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   function onChangeCascader(value) {
     // setCategoryId(value)
     // actionRef.current.reload();
+    console.log("Valueeeeeeeeeeeeeeeee", value);
+    
     console.log(`selected ${value}`);
   }
 
@@ -225,7 +235,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
          initialValues={{
           title: formVals.title,
           type: formVals.type,
-          // attrOption: formVals.attrOption,
+          attrOption: attrOp,
           // categoriesId: formVals.categoriesId,
             // status: formVals.status,
          }}
@@ -287,7 +297,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
                 <Option value="multiple-choice">Multiple Choice</Option>
             </Select>
             </FormItem>
-            {attrTpyeValue=='single-slection' || attrTpyeValue=='multiple-slection' ? (
+            {attrTpyeValue=='single-choice' || attrTpyeValue=='multiple-choice' ? (
               <Form.List
                 name="attrOption"
                 rules={[
