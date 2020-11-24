@@ -24,7 +24,7 @@ function getBase64(file) {
     previewTitle: '',
     fileList: [],
   };
-
+  
   componentDidMount() {
     // fetch the project name, once it retrieves resolve the promsie and update the state. 
     this.getRules().then(result => this.setState({

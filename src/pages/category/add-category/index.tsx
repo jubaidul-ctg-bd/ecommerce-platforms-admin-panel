@@ -364,7 +364,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           updateurl={(e) => getUrl(e)}
           reqName={name}
         >
-          
         </MediaWall>
           
       </Modal>
