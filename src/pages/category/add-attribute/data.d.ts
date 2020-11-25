@@ -27,7 +27,7 @@ export interface TableListItem {
   attrTitle: string;
   attrType: string;
   type: string;
-  termValues: any
+  termValues: any;
 }
 
 export interface TableListPagination {

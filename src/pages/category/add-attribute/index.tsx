@@ -215,9 +215,9 @@ const AttributeTableList: React.FC<{}> = () => {
       render : ( _ , row ) => (   
         <Space>
           { row.termValues.map ( ( val ) => (  
-            < Tag color = "cyan" key = { val } >  
-              { val.title }
-            </ Tag >
+              < Tag color = "cyan" key = { val } >  
+                { val.title }
+              </ Tag > 
           ) )  }
         </Space>
       ) ,
@@ -306,136 +306,136 @@ const AttributeTableList: React.FC<{}> = () => {
         />
         
         <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
-        <Card bordered={false} style={{ marginBottom: 16 }}>
-          <Form name="dynamic_form_item"  onFinish={onFinish}>
-            {/* {!(categoryId && categoryTitle) ? (
-            <FormItem
-              {...formItemLayout}
-              label="Category"
-              name="categoriesId"
-              rules={[
-                {
-                  required: true,
-                  message: "Please, select the Category",
-                },
-              ]}
-            >
-              <Cascader
-                fieldNames={{ label: 'title', value: 'id', children: 'children' }}
-                options={options}
-                expandTrigger="hover"
-                displayRender={displayRender}
-                onChange={onChangeCascader}
-                changeOnSelect={true}              
-              />
-            </FormItem>   
-            ) : null}  */}
-            <FormItem
-              {...formItemLayout}
-              label="Attibute Title"
-              name="title"
-              rules={[
-                {
-                  required: true,
-                  message: "Please, enter the attribute title",
-                },
-              ]}
-            >
-              <Input placeholder="Give the Attribute Title" />
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="Attibute Type"
-              name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please, select the attribute type",
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                placeholder="Select Attribute Type"
-                optionFilterProp="children"
-                onChange={onChange}
-              >
-                <Option value="text">Text</Option>
-                <Option value="single-choice">Single Choice</Option>
-                <Option value="multiple-choice">Multiple Choice</Option>
-            </Select>
-            </FormItem>
-
-            {attrTpyeValue=='single-choice' || attrTpyeValue=='multiple-choice' ? (
-              <Form.List
-                name="attrOption"
+          <Card bordered={false} style={{ marginBottom: 16 }}>
+            <Form name="dynamic_form_item"  onFinish={onFinish}>
+              {/* {!(categoryId && categoryTitle) ? (
+              <FormItem
+                {...formItemLayout}
+                label="Category"
+                name="categoriesId"
                 rules={[
                   {
-                    validator: async (_, attrOption) => {
-                      if (!attrOption || attrOption.length < 2) {
-                        return Promise.reject(new Error('At least 2 options'));
-                      }
-                    },
+                    required: true,
+                    message: "Please, select the Category",
                   },
                 ]}
               >
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => (
-                      <FormItem
-                        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                        label={index === 0 ? 'Options' : ''}
-                        required={false}
-                        key={field.key}
-                      >
+                <Cascader
+                  fieldNames={{ label: 'title', value: 'id', children: 'children' }}
+                  options={options}
+                  expandTrigger="hover"
+                  displayRender={displayRender}
+                  onChange={onChangeCascader}
+                  changeOnSelect={true}              
+                />
+              </FormItem>   
+              ) : null}  */}
+              <FormItem
+                {...formItemLayout}
+                label="Attibute Title"
+                name="title"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please, enter the attribute title",
+                  },
+                ]}
+              >
+                <Input placeholder="Give the Attribute Title" />
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label="Attibute Type"
+                name="type"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please, select the attribute type",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Select Attribute Type"
+                  optionFilterProp="children"
+                  onChange={onChange}
+                >
+                  <Option value="text">Text</Option>
+                  <Option value="single-choice">Single Choice</Option>
+                  <Option value="multiple-choice">Multiple Choice</Option>
+              </Select>
+              </FormItem>
+
+              {attrTpyeValue=='single-choice' || attrTpyeValue=='multiple-choice' ? (
+                <Form.List
+                  name="attrOption"
+                  rules={[
+                    {
+                      validator: async (_, attrOption) => {
+                        if (!attrOption || attrOption.length < 2) {
+                          return Promise.reject(new Error('At least 2 options'));
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => (
                         <FormItem
-                          {...field}
-                          validateTrigger={['onChange', 'onBlur']}
-                          rules={[
-                            {
-                              required: true,
-                              whitespace: true,
-                              message: "Please input option's or delete this field.",
-                            },
-                          ]}
-                          noStyle
+                          {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+                          label={index === 0 ? 'Options' : ''}
+                          required={false}
+                          key={field.key}
                         >
-                          <Input placeholder="option" style={{ width: '60%' }}/>
+                          <FormItem
+                            {...field}
+                            validateTrigger={['onChange', 'onBlur']}
+                            rules={[
+                              {
+                                required: true,
+                                whitespace: true,
+                                message: "Please input option's or delete this field.",
+                              },
+                            ]}
+                            noStyle
+                          >
+                            <Input placeholder="option" style={{ width: '60%' }}/>
+                          </FormItem>
+                          {fields.length > 1 ? (
+                            <MinusCircleOutlined
+                              className="dynamic-delete-button"
+                              onClick={() => remove(field.name)}
+                            />
+                          ) : null}
                         </FormItem>
-                        {fields.length > 1 ? (
-                          <MinusCircleOutlined
-                            className="dynamic-delete-button"
-                            onClick={() => remove(field.name)}
-                          />
-                        ) : null}
+                      ))}
+                      <FormItem {...formItemLayoutWithOutLabel}>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          style={{ width: '60%' }}
+                          icon={<PlusOutlined />}
+                        >
+                          Add option
+                        </Button>
+                        <Form.ErrorList errors={errors} />
                       </FormItem>
-                    ))}
-                    <FormItem {...formItemLayoutWithOutLabel}>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        style={{ width: '60%' }}
-                        icon={<PlusOutlined />}
-                      >
-                        Add option
-                      </Button>
-                      <Form.ErrorList errors={errors} />
-                    </FormItem>
-                  </>
-                )}
-              </Form.List>
-            ) : null} 
-            
-            <FormItem {...formItemLayoutWithOutLabel}>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              {/* <Button style={{ marginLeft: 8 }} onClick={ () => form.resetFields()}>
-                Reset
-              </Button> */}
-            </FormItem>
-        </Form>
-        </Card>
+                    </>
+                  )}
+                </Form.List>
+              ) : null} 
+              
+              <FormItem {...formItemLayoutWithOutLabel}>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+                {/* <Button style={{ marginLeft: 8 }} onClick={ () => form.resetFields()}>
+                  Reset
+                </Button> */}
+              </FormItem>
+          </Form>
+          </Card>
         
         </CreateForm>
         {stepFormValues && Object.keys(stepFormValues).length ? (
