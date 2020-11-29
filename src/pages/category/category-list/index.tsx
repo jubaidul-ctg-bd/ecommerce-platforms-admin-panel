@@ -178,7 +178,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: 'Icon',
-      dataIndex: 'icon',
+      dataIndex:  ['images', 'icon'],
       renderText: (val: string) => (
         <Image
           width={40}
@@ -188,7 +188,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: 'Image',
-      dataIndex: 'image',
+      dataIndex: ['images', 'image'],
       renderText: (val: string) => (
         <Image
           width={40}
@@ -198,7 +198,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: 'Banner',
-      dataIndex: 'banner',
+      dataIndex:  ['images', 'banner'],
       renderText: (val: string) => (
         <Image
           width={40}
