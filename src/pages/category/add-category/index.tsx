@@ -14,7 +14,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
-import { categoryQuery } from './service'
+import { categoryQuery, querySlug } from './service'
 import proSettings from '../../../../config/defaultSettings';
 
 
@@ -95,6 +95,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
+  const [slug, getSlug] = useState<string>('');
 
   const [options, setOptions] = useState([])
   useEffect(() => {
@@ -105,6 +106,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     icon: value1,
     image:value2,
     banner: value3,
+    slug: slug,
   });   
   console.log(value1, value2, value3);
   
@@ -202,7 +204,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -215,7 +217,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
+            <Input disabled placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}

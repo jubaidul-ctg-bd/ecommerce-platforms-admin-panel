@@ -21,6 +21,18 @@ export async function queryRule() {
   return rqResult;
 }
 
+export async function querySlug(params: { slug: string }) {
+  console.log("params", params.slug);
+  
+  return request('/term/getSlug', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+
 // export async function removeRule(params: { name: string[] }) {
 //   //console.log("params at removeRule", params);
 //   return request('http://localhost:3000/cats/deleteImage', {
