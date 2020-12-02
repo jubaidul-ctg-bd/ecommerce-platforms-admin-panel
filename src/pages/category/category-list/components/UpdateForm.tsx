@@ -76,7 +76,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [name, updateName] = useState<string>('');
   const [formVals, setFormVals] = useState<FormValueType>({
     title: props.values.title,
-    parentCategories: props.values.parentTermValue,
+    // parentCategories: props.values.parentTermValue,
     id: props.values.id,
     order: props.values.order,
     description: props.values.description,
@@ -217,7 +217,7 @@ const UpdateForm: FC<UpdateFormProps> = (props) => {
          form={form}
          initialValues={{
             title: formVals.title,
-            parentCategories: formVals.parentCategories,
+            // parentCategories: formVals.parentCategories,
             order: formVals.order,
             description: formVals.description,
             name: formVals.name,

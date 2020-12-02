@@ -32,6 +32,15 @@ export async function querySlug(params: { slug: string }) {
   });
 }
 
+export async function queryTermValues(params: { id: number }) {
+  return request('/term/getOrder', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
 
 // export async function removeRule(params: { name: string[] }) {
 //   //console.log("params at removeRule", params);

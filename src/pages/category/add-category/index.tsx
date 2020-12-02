@@ -14,7 +14,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
-import { categoryQuery, querySlug } from './service'
+import { categoryQuery, querySlug, queryTermValues } from './service'
 import proSettings from '../../../../config/defaultSettings';
 
 
@@ -163,6 +163,13 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (publicType) setShowPublicUsers(publicType === '2');
   };
 
+  const onChangeCascader = async(valuse: any) => {
+    
+    let order = queryTermValues({id: valuse})
+
+    console.log("onChangeCascader==========", order);
+  }
+
   const modelreq = (e) => {
     handleModalVisible(true);
     updateName(e);
@@ -229,7 +236,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
-              onChange={onChange}
+              onChange={onChangeCascader}
               changeOnSelect={true}              
             />
           </FormItem>      
