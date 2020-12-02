@@ -21,12 +21,17 @@ export default {
   'menu.exception.500': '500',
   
 
-  'menu.category': 'Product Category',
+  'menu.category': 'Category',
   'menu.category.category-list': 'Categories', 
   'menu.category.add-category': 'Add Category',  
   'menu.category.add-attribute': 'Attributes',  
   'menu.category.media-center': 'Media Center', 
   'menu.category.select': 'Select',
+
+
+  'menu.brand': 'Brand',
+  'menu.brand.brand-list': 'Brands', 
+  'menu.brand.add-brand': 'Add Brand',  
 
   'menu.media': 'Media Center',
   'menu.media.manage-media': 'Manage Media', 

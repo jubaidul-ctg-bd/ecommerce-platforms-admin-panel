@@ -150,7 +150,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const onFinish = (values: { [key: string]: any }) => {
     const { dispatch } = props;
     dispatch({
-      type: 'categoryAdd/submitRegularForm',
+      type: 'brandAdd/submitRegularForm',
       payload: values,
     });
     form.resetFields();
@@ -195,7 +195,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   return (
     <PageHeaderWrapper 
-      // content={<FormattedMessage id="formandbasic-form.basic.description" />}
+      // content={<FormattedMessage id="brand-form.basic.description" />}
     >
       <Card bordered={false}>
         <Form
@@ -210,33 +210,33 @@ const BasicForm: FC<BasicFormProps> = (props) => {
         >
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.title.label" />}
+            label={<FormattedMessage id="brand-form.title.label" />}
             name="title"
             rules={[
               {
                 required: true,
-                message: formatMessage({ id: 'formandbasic-form.title.required' }),
+                message: formatMessage({ id: 'brand-form.title.required' }),
               },
             ]}
           >
-            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'brand-form.title.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.slug.label" />}
+            label={<FormattedMessage id="brand-form.slug.label" />}
             name="slug"
             rules={[
               {
                 // required: true,
-                message: formatMessage({ id: 'formandbasic-form.slug.required' }),
+                message: formatMessage({ id: 'brand-form.slug.required' }),
               },
             ]}
           >
-            <Input disabled placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
+            <Input disabled placeholder={formatMessage({ id: 'brand-form.slug.placeholder' })} />
           </FormItem>
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
+            label={<FormattedMessage id="brand-form.parent-category.label" />}
             name="parentCategories"
           >
             <Cascader
@@ -247,10 +247,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               onChange={onChangeCascader}
               changeOnSelect={true}              
             />
-          </FormItem>      
+          </FormItem>       */}
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.order.label" />}
+            label={<FormattedMessage id="brand-form.order.label" />}
             name="order"
           >
             <Select
@@ -273,33 +273,33 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.description.label" />}
+            label={<FormattedMessage id="brand-form.description.label" />}
             name="description"
           >
             <TextArea
               style={{ minHeight: 32 }}
-              placeholder={formatMessage({ id: 'formandbasic-form.description.placeholder' })}
+              placeholder={formatMessage({ id: 'brand-form.description.placeholder' })}
               rows={4}
             />
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.status.label" />}
+            label={<FormattedMessage id="brand-form.status.label" />}
             name="status"
             rules={[
               {
                 required: true,
-                message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                message: formatMessage({ id: 'brand-form.status.required' }),
               },
             ]}
           >
             <div>
               <Radio.Group>
                 <Radio value="published">
-                  <FormattedMessage id="formandbasic-form.radio.publish" />
+                  <FormattedMessage id="brand-form.radio.publish" />
                 </Radio>
                 <Radio value="unpublished">
-                  <FormattedMessage id="formandbasic-form.radio.unpublish" />
+                  <FormattedMessage id="brand-form.radio.unpublish" />
                 </Radio>
               </Radio.Group>
             </div>
@@ -362,10 +362,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </Form.Item>
           <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
             <Button type="primary" htmlType="submit" loading={submitting}>
-              <FormattedMessage id="formandbasic-form.form.submit" />
+              <FormattedMessage id="brand-form.form.submit" />
             </Button>
             <Button style={{ marginLeft: 8 }}>
-              <FormattedMessage id="formandbasic-form.form.save" />
+              <FormattedMessage id="brand-form.form.save" />
             </Button>
           </FormItem>
         </Form>
@@ -393,5 +393,5 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 };
 
 export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['categoryAdd/submitRegularForm'],
+  submitting: loading.effects['brandAdd/submitRegularForm'],
 }))(BasicForm);

@@ -11,48 +11,12 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
-import MediaWall from './components/MediaWall';
-import { categoryQuery, querySlug, queryTermValues } from './service'
-import proSettings from '../../../../config/defaultSettings';
-import { element } from 'prop-types';
+import MediaWall from '../../add-brand/components/MediaWall';
+import { categoryQuery } from '../../add-brand/service'
+import proSettings from '../../../../../config/defaultSettings';
+import { TableListItem } from '../data';
 
-
-// const options = [
-//   {
-//     value: 'zhejiang',
-//     label: 'Zhejiang',
-//     children: [
-//       {
-//         value: 'hangzhou',
-//         label: 'Hangzhou',
-//         children: [
-//           {
-//             value: 'xihu',
-//             label: 'West Lake',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     value: 'jiangsu',
-//     label: 'Jiangsu',
-//     children: [
-//       {
-//         value: 'nanjing',
-//         label: 'Nanjing',
-//         children: [
-//           {
-//             value: 'zhonghuamen',
-//             label: 'Zhong Hua Men',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
 
 function onChange(value: any) {
   //console.log(value);
@@ -63,9 +27,28 @@ function displayRender(label: any) {
   return label[label.length - 1];
 }
 
-// function handleChange(value: any) {
-//   console.log(`selected ${value}`);
-// }
+
+export interface FormValueType extends Partial<TableListItem> {
+  target?: string;
+  template?: string;
+  type?: string;
+  time?: string;
+  frequency?: string;
+  phone?:string
+}
+
+export interface UpdateFormProps {
+  onCancel: (flag?: boolean, formVals?: FormValueType) => void;
+  onSubmit: (values: FormValueType) => void;
+  updateModalVisible: boolean;
+  values: Partial<TableListItem>;
+}
+
+export interface UpdateFormState {
+  formVals: FormValueType;
+  currentStep: number;
+}
+
 
 
 
@@ -82,43 +65,58 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 
-interface BasicFormProps {
-  submitting: boolean;
-  dispatch: Dispatch;
-}
 
-const BasicForm: FC<BasicFormProps> = (props) => {
+const UpdateForm: FC<UpdateFormProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const { submitting } = props;
   const [form] = Form.useForm();
   // const [value, updateValue] = useState<string>(null);
   const [value1, updateValue1] = useState<string>('');
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
-  const [slug, getSlug] = useState<string>('');
-  const [oder, setOrder] = useState([])
+  const [formVals, setFormVals] = useState<FormValueType>({
+    title: props.values.title,
+    // parentCategories: props.values.parentTermValue,
+    id: props.values.id,
+    order: props.values.order,
+    description: props.values.description,
+    icon: props.values.icon,
+    image: props.values.image,
+    banner: props.values.banner,
+    status: props.values.status,
+    slug: props.values.slug,
+  });
+
+  const {
+    onSubmit: handleUpdate,
+    onCancel: handleUpdateModalVisible,
+    updateModalVisible,
+    values,
+  } = props;
+
+
   const [options, setOptions] = useState([])
   useEffect(() => {
     getOptions(); 
+    setImageValue();
   },[])
+
+  const setImageValue = () => {
+    updateValue1(formVals.icon || '');
+    updateValue2(formVals.image || '');
+    updateValue3(formVals.banner || '');
+  }
 
   form.setFieldsValue({
     icon: value1,
-    image:value2,
+    image: value2,
     banner: value3,
-    slug: slug,
   });   
   console.log(value1, value2, value3);
   
   const getOptions = async() => {
     let val = await categoryQuery();
-    setOptions(val);  
-    let order = []
-    order = Object.assign([], val)
-    order.push({order: order.length+1}) 
-    order.sort((a, b) => b.order - a.order);
-    setOrder(order)
+    setOptions(val);    
   }
 
   const update = {
@@ -169,15 +167,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (publicType) setShowPublicUsers(publicType === '2');
   };
 
-  const onChangeCascader = async(valuse: any) => {
-    let val = await queryTermValues({id: valuse})
-    let order = []
-    order = Object.assign([], val)
-    order.push({order: order.length+1}) 
-    order.sort((a, b) => b.order - a.order);
-    setOrder(order)
-  }
-
   const modelreq = (e) => {
     handleModalVisible(true);
     updateName(e);
@@ -193,20 +182,51 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   }
 
 
+  const handleNext = async () => {
+    const fieldsValue = await form.validateFields();
+    setFormVals({ ...formVals, ...fieldsValue });
+    handleUpdate({ ...formVals, ...fieldsValue });
+  };
+
+ 
+
+  const renderFooter = () => {
+    return (
+      <>
+        <Button onClick={() => handleUpdateModalVisible(false, values)}>cancel</Button>
+        <Button type="primary" onClick={() => handleNext()}>
+          Update
+        </Button>
+      </>
+    );
+  };
+
+
   return (
-    <PageHeaderWrapper 
-      // content={<FormattedMessage id="formandbasic-form.basic.description" />}
+    <Modal
+      width={640}
+      bodyStyle={{ padding: '32px 40px 48px' }}
+      destroyOnClose
+      title="Update User"
+      visible={updateModalVisible}
+      footer={renderFooter()}
+      onCancel={() => handleUpdateModalVisible()}
     >
       <Card bordered={false}>
-        <Form
-          hideRequiredMark
-          style={{ marginTop: 8 }}
-          form={form}
-          name="basic"
-          initialValues={{ public: '1' }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          onValuesChange={onValuesChange}
+      <Form 
+         form={form}
+         initialValues={{
+            title: formVals.title,
+            // parentCategories: formVals.parentCategories,
+            order: formVals.order,
+            description: formVals.description,
+            name: formVals.name,
+            icon: formVals.icon,
+            banner: formVals.banner,
+            image: formVals.image,
+            slug: formVals.slug,
+            // status: formVals.status,
+         }}
         >
           <FormItem
             {...formItemLayout}
@@ -219,7 +239,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -232,7 +252,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input disabled placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
+            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -244,8 +264,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
-              onChange={onChangeCascader}
-              changeOnSelect={true}              
+              onChange={onChange}
+              changeOnSelect={true}          
             />
           </FormItem>      
           <FormItem
@@ -258,17 +278,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               placeholder="Select a person"
               optionFilterProp="children"
               onChange={onChangeSelect}
-              // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
-
               onSearch={onSearch}
-              // filterOption={(input, option) =>
-              //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              // }
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
-              {oder.map((elment, index)=> (
-                console.log("oder=======", elment.order),
-                <Option value={elment.order}>{elment.order}</Option>
-                ))}
+              <Option value="1">1</Option>
+              <Option value="2">2</Option>
+              <Option value="3">3</Option>
             </Select>
           </FormItem>
           <FormItem
@@ -360,14 +377,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               />} disabled/>
             ) : null}
           </Form.Item>
-          <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-            <Button type="primary" htmlType="submit" loading={submitting}>
-              <FormattedMessage id="formandbasic-form.form.submit" />
-            </Button>
-            <Button style={{ marginLeft: 8 }}>
-              <FormattedMessage id="formandbasic-form.form.save" />
-            </Button>
-          </FormItem>
         </Form>
       </Card>
 
@@ -388,10 +397,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           
       </Modal>
 
-    </PageHeaderWrapper>
+      </Modal>
   );
 };
 
-export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['categoryAdd/submitRegularForm'],
-}))(BasicForm);
+export default UpdateForm;

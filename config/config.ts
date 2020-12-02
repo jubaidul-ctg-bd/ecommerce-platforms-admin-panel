@@ -117,12 +117,26 @@ export default defineConfig({
                   path: '/category/add-attribute/',
                   component: './category/add-attribute/',
                 },
-                // {
-                //   name: 'media-center',
-                //   icon: 'smile',
-                //   path: '/category/media-center',
-                //   component: './category/media-center',
-                // },
+              ],
+            },
+
+            {
+              path: '/brand',
+              icon: 'form',
+              name: 'brand',
+              routes: [
+                {
+                  name: 'brand-list',
+                  icon: 'smile',
+                  path: '/brand/brand-list',
+                  component: './brand/brand-list',
+                },
+                {
+                  name: 'add-brand',
+                  icon: 'smile',
+                  path: '/brand/add-brand',
+                  component: './brand/add-brand',
+                },
               ],
             },
 
