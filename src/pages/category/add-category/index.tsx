@@ -169,8 +169,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (publicType) setShowPublicUsers(publicType === '2');
   };
 
-  const onChangeCascader = async(valuse: any) => {
-    let val = await queryTermValues({id: valuse})
+  const onChangeCascader = async(label: any) => {
+    let val = await queryTermValues({id:  label[label.length - 1]})
     let order = []
     order = Object.assign([], val)
     order.push({order: order.length+1}) 

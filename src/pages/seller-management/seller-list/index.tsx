@@ -98,8 +98,8 @@ const TableList: React.FC<{}> = () => {
   };
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: 'Shop Name',
-      dataIndex: 'shopName',
+      title: 'Shop Title',
+      dataIndex: 'shopTitle',
     },
     {
       title: 'Cell No',

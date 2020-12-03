@@ -25,7 +25,7 @@ export default {
   'menu.category.category-list': 'Categories', 
   'menu.category.add-category': 'Add Category',  
   'menu.category.add-attribute': 'Attributes',  
-  'menu.category.media-center': 'Media Center', 
+  'menu.category.media-center': 'Media', 
   'menu.category.select': 'Select',
 
 
@@ -33,7 +33,7 @@ export default {
   'menu.brand.brand-list': 'Brands', 
   'menu.brand.add-brand': 'Add Brand',  
 
-  'menu.media': 'Media Center',
+  'menu.media': 'Media',
   'menu.media.manage-media': 'Manage Media', 
 
   'menu.seller-management': 'Seller Management',
