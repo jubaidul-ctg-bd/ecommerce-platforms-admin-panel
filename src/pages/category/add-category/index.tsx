@@ -3,13 +3,13 @@ import {
   Select,
   Radio,
   Button,
-  Card,  
+  Card,
   Input,
   Modal,
   Image,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
+import { connect, Dispatch, FormattedMessage, formatMessage, useLocation } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
@@ -97,28 +97,45 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
   const [slug, getSlug] = useState<string>('');
+  const [status, getStatus] = useState<string>('');
   const [oder, setOrder] = useState([])
   const [options, setOptions] = useState([])
+  const location = useLocation<object>()
+  if (location.state == undefined) {
+    location.state = {}
+  } else {
+
+  }
   useEffect(() => {
-    getOptions(); 
-  },[])
+    getOptions();
+  }, [])
 
   form.setFieldsValue({
     icon: value1,
-    image:value2,
+    image: value2,
     banner: value3,
     slug: slug,
-  });   
+  });
   console.log(value1, value2, value3);
-  
-  const getOptions = async() => {
+
+  const getOptions = async () => {
     let val = await categoryQuery();
-    setOptions(val);  
+    setOptions(val);
     let order = []
     order = Object.assign([], val)
-    order.push({order: order.length+1}) 
+    order.push({ order: order.length + 1 })
     order.sort((a, b) => b.order - a.order);
     setOrder(order)
+    
+    if (location.state.status!=undefined) {
+      getStatus(location.state.status)
+      getSlug(location.state.slug)
+      updateValue1(location.state.images.icon.url)
+      updateValue2(location.state.images.image.url)
+      updateValue3(location.state.images.banner.url)
+      console.log("images", location.state.images.icon.url);
+    }
+    
   }
 
   const update = {
@@ -169,11 +186,11 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (publicType) setShowPublicUsers(publicType === '2');
   };
 
-  const onChangeCascader = async(label: any) => {
-    let val = await queryTermValues({id:  label[label.length - 1]})
+  const onChangeCascader = async (label: any) => {
+    let val = await queryTermValues({ id: label[label.length - 1] })
     let order = []
     order = Object.assign([], val)
-    order.push({order: order.length+1}) 
+    order.push({ order: order.length + 1 })
     order.sort((a, b) => b.order - a.order);
     setOrder(order)
   }
@@ -186,16 +203,16 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const getUrl = (e) => {
     handleModalVisible(e.modelSate);
     updateName(e.name);
-    if(e.name=="icon") updateValue1(e.url);
-    else if(e.name=="image")updateValue2(e.url);
-    else if(e.name=="banner")updateValue3(e.url);
-    
+    if (e.name == "icon") updateValue1(e.url);
+    else if (e.name == "image") updateValue2(e.url);
+    else if (e.name == "banner") updateValue3(e.url);
+
   }
 
 
   return (
-    <PageHeaderWrapper 
-      // content={<FormattedMessage id="formandbasic-form.basic.description" />}
+    <PageHeaderWrapper
+    // content={<FormattedMessage id="formandbasic-form.basic.description" />}
     >
       <Card bordered={false}>
         <Form
@@ -203,10 +220,22 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           style={{ marginTop: 8 }}
           form={form}
           name="basic"
-          initialValues={{ public: '1' }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
+          initialValues={{
+            title: location.state.title,
+            // parentCategories: formVals.parentCategories,
+            order: location.state.order,
+            description: location.state.description,
+            name: location.state.name,
+            icon: location.state.icon,
+            banner: location.state.banner,
+            image: location.state.image,
+            slug: location.state.slug,
+            // status: formVals.status,
+          }}
+
         >
           <FormItem
             {...formItemLayout}
@@ -219,20 +248,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input onBlur={async (e) => getSlug(await querySlug({ slug: e.target.value }))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.slug.label" />}
+            label='Slug'
             name="slug"
-            rules={[
-              {
-                // required: true,
-                message: formatMessage({ id: 'formandbasic-form.slug.required' }),
-              },
-            ]}
           >
-            <Input disabled placeholder={formatMessage({ id: 'formandbasic-form.slug.placeholder' })} />
+            <Input disabled placeholder='slug' />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -245,9 +268,9 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               expandTrigger="hover"
               displayRender={displayRender}
               onChange={onChangeCascader}
-              changeOnSelect={true}              
+              changeOnSelect={true}
             />
-          </FormItem>      
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.order.label" />}
@@ -261,14 +284,13 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
 
               onSearch={onSearch}
-              // filterOption={(input, option) =>
-              //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              // }
+            // filterOption={(input, option) =>
+            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            // }
             >
-              {oder.map((elment, index)=> (
-                console.log("oder=======", elment.order),
+              {oder.map((elment, index) => (
                 <Option value={elment.order}>{elment.order}</Option>
-                ))}
+              ))}
             </Select>
           </FormItem>
           <FormItem
@@ -282,45 +304,46 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               rows={4}
             />
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.status.label" />}
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.status.required' }),
-              },
-            ]}
-          >
-            <div>
-              <Radio.Group>
-                <Radio value="published">
-                  <FormattedMessage id="formandbasic-form.radio.publish" />
-                </Radio>
-                <Radio value="unpublished">
-                  <FormattedMessage id="formandbasic-form.radio.unpublish" />
-                </Radio>
-              </Radio.Group>
-            </div>
-          </FormItem>
-          
+          {status || location.state.length == 0 ? (
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.status.label" />}
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                },
+              ]}
+            >
+              <div>
+                <Radio.Group defaultValue={status}>
+                  <Radio value="published">
+                    <FormattedMessage id="formandbasic-form.radio.publish" />
+                  </Radio>
+                  <Radio value="unpublished">
+                    <FormattedMessage id="formandbasic-form.radio.unpublish" />
+                  </Radio>
+                </Radio.Group>
+              </div>
+            </FormItem>
+          ) : null}
 
           <Form.Item
             {...formItemLayout}
             name="icon"
             label="Icon"
-          >            
+          >
             <Button icon={<UploadOutlined />} onClick={() => modelreq("icon")} >
               Click to upload
             </Button>
             {update.value1 ? (
-              <Input 
+              <Input
                 name="icon"
                 prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value1}
-              />} disabled/>
+                  width={50}
+                  src={proSettings.baseUrl + "/media/image/" + update.value1}
+                />} disabled />
             ) : null}
           </Form.Item>
 
@@ -328,36 +351,36 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             {...formItemLayout}
             name="image"
             label="Image"
-          >            
+          >
             <Button icon={<UploadOutlined />} onClick={() => modelreq("image")} >
               Click to upload
             </Button>
             {update.value2 ? (
-              <Input 
+              <Input
                 name="image"
                 prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value2}
-              />} disabled/>
+                  width={50}
+                  src={proSettings.baseUrl + "/media/image/" + update.value2}
+                />} disabled />
             ) : null}
           </Form.Item>
 
-              
+
           <Form.Item
             {...formItemLayout}
             name="banner"
             label="Banner"
-          >            
+          >
             <Button icon={<UploadOutlined />} onClick={() => modelreq("banner")}>
               Click to upload
             </Button>
             {update.value3 ? (
-              <Input 
-                name="banner" 
+              <Input
+                name="banner"
                 prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value3}
-              />} disabled/>
+                  width={50}
+                  src={proSettings.baseUrl + "/media/image/" + update.value3}
+                />} disabled />
             ) : null}
           </Form.Item>
           <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
@@ -380,12 +403,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
         onOk={() => handleModalVisible(false)}
         width={1000}
       >
-        <MediaWall 
+        <MediaWall
           updateurl={(e) => getUrl(e)}
           reqName={name}
         >
         </MediaWall>
-          
+
       </Modal>
 
     </PageHeaderWrapper>

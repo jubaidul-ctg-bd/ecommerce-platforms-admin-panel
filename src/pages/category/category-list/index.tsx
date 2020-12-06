@@ -215,8 +215,12 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              // handleUpdateModalVisible(true);
+              // setStepFormValues(record);
+              history.push({
+                pathname: '/category/add-category',
+                state: record,
+              });
             }}
           >
             Edit
