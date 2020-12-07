@@ -99,10 +99,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [slug, getSlug] = useState<string>('');
   const [status, getStatus] = useState<string>('');
   const [oder, setOrder] = useState([])
+  const [defaultOder, setDefaultOder] = useState<string>('');
+  const [flag, setFlag] = useState<boolean>(false);
   const [options, setOptions] = useState([])
+  const [defaultCategory, setDefaultCategory] = useState([])
+  const [parent, setParent] = useState<boolean>(true);
   const location = useLocation<object>()
   if (location.state == undefined) {
-    location.state = {}
+    location.state = []
   } else {
 
   }
@@ -126,16 +130,24 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     order.push({ order: order.length + 1 })
     order.sort((a, b) => b.order - a.order);
     setOrder(order)
-    
-    if (location.state.status!=undefined) {
+    // setDefaultOder(order.length)
+
+    if (location.state.status != undefined) {
+      if (location.state.parentTermValue) {
+        location.state.parentTermValue = [location.state.parentTermValue.title]
+        setDefaultCategory(location.state.parentTermValue)
+      } else {
+        setParent(false)
+      }
       getStatus(location.state.status)
       getSlug(location.state.slug)
       updateValue1(location.state.images.icon.url)
       updateValue2(location.state.images.image.url)
       updateValue3(location.state.images.banner.url)
-      console.log("images", location.state.images.icon.url);
+      setDefaultOder(location.state.order)
+    } else {
     }
-    
+
   }
 
   const update = {
@@ -193,6 +205,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     order.push({ order: order.length + 1 })
     order.sort((a, b) => b.order - a.order);
     setOrder(order)
+    setDefaultOder('')
+    setFlag(true)
   }
 
   const modelreq = (e) => {
@@ -206,7 +220,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (e.name == "icon") updateValue1(e.url);
     else if (e.name == "image") updateValue2(e.url);
     else if (e.name == "banner") updateValue3(e.url);
-
   }
 
 
@@ -215,183 +228,191 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     // content={<FormattedMessage id="formandbasic-form.basic.description" />}
     >
       <Card bordered={false}>
-        <Form
-          hideRequiredMark
-          style={{ marginTop: 8 }}
-          form={form}
-          name="basic"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          onValuesChange={onValuesChange}
-          initialValues={{
-            title: location.state.title,
-            // parentCategories: formVals.parentCategories,
-            order: location.state.order,
-            description: location.state.description,
-            name: location.state.name,
-            icon: location.state.icon,
-            banner: location.state.banner,
-            image: location.state.image,
-            slug: location.state.slug,
-            // status: formVals.status,
-          }}
+        { ((defaultCategory.length || !parent) && defaultOder) || location.state.length == 0 ? (
+          <Form
+            hideRequiredMark
+            style={{ marginTop: 8 }}
+            form={form}
+            name="basic"
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            onValuesChange={onValuesChange}
+            initialValues={{
+              title: location.state.title,
+              parentCategories: defaultCategory,
+              order: defaultOder,
+              description: location.state.description,
+              name: location.state.name,
+              icon: location.state.icon,
+              banner: location.state.banner,
+              image: location.state.image,
+              slug: location.state.slug,
+              // status: formVals.status,
+            }}
 
-        >
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.title.label" />}
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.title.required' }),
-              },
-            ]}
           >
-            <Input onBlur={async (e) => getSlug(await querySlug({ slug: e.target.value }))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='Slug'
-            name="slug"
-          >
-            <Input disabled placeholder='slug' />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
-            name="parentCategories"
-          >
-            <Cascader
-              fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
-              options={options}
-              expandTrigger="hover"
-              displayRender={displayRender}
-              onChange={onChangeCascader}
-              changeOnSelect={true}
-            />
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.order.label" />}
-            name="order"
-          >
-            <Select
-              showSearch
-              placeholder="Select a person"
-              optionFilterProp="children"
-              onChange={onChangeSelect}
-              // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
-
-              onSearch={onSearch}
-            // filterOption={(input, option) =>
-            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            // }
-            >
-              {oder.map((elment, index) => (
-                <Option value={elment.order}>{elment.order}</Option>
-              ))}
-            </Select>
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.description.label" />}
-            name="description"
-          >
-            <TextArea
-              style={{ minHeight: 32 }}
-              placeholder={formatMessage({ id: 'formandbasic-form.description.placeholder' })}
-              rows={4}
-            />
-          </FormItem>
-          {status || location.state.length == 0 ? (
             <FormItem
               {...formItemLayout}
-              label={<FormattedMessage id="formandbasic-form.status.label" />}
-              name="status"
+              label={<FormattedMessage id="formandbasic-form.title.label" />}
+              name="title"
               rules={[
                 {
                   required: true,
-                  message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                  message: formatMessage({ id: 'formandbasic-form.title.required' }),
                 },
               ]}
             >
-              <div>
-                <Radio.Group defaultValue={status}>
-                  <Radio value="published">
-                    <FormattedMessage id="formandbasic-form.radio.publish" />
-                  </Radio>
-                  <Radio value="unpublished">
-                    <FormattedMessage id="formandbasic-form.radio.unpublish" />
-                  </Radio>
-                </Radio.Group>
-              </div>
+              <Input onBlur={async (e) => getSlug(await querySlug({ slug: e.target.value }))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
             </FormItem>
-          ) : null}
+            <FormItem
+              {...formItemLayout}
+              label='Slug'
+              name="slug"
+            >
+              <Input disabled placeholder='slug' />
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.parent-category.label" />}
+              name="parentCategories"
+            >
+              <Cascader
+                fieldNames={{ label: 'title', value: 'title', children: 'childTermValues' }}
+                options={options}
+                expandTrigger="hover"
+                // displayRender={displayRender}
+                onChange={onChangeCascader}
+                changeOnSelect={true}
+              />
+            </FormItem>
+            {oder.length && (flag || defaultOder || location.state.length == 0) ?  (
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.order.label" />}
+                name="order"
+              >
+                <Select
+                  showSearch
+                  placeholder="Select a person"
+                  optionFilterProp="children"
+                  onChange={onChangeSelect}
+                  defaultValue={defaultOder}
+                  // value={defaultOder}
+                  // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
 
-          <Form.Item
-            {...formItemLayout}
-            name="icon"
-            label="Icon"
-          >
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("icon")} >
-              Click to upload
-            </Button>
-            {update.value1 ? (
-              <Input
-                name="icon"
-                prefix={<Image
-                  width={50}
-                  src={proSettings.baseUrl + "/media/image/" + update.value1}
-                />} disabled />
+                  onSearch={onSearch}
+                // filterOption={(input, option) =>
+                //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                // }
+                >
+                  {oder.map((elment, index) => (
+                    <Option value={elment.order}>{elment.order}</Option>
+                  ))}
+                </Select>
+              </FormItem>
             ) : null}
-          </Form.Item>
 
-          <Form.Item
-            {...formItemLayout}
-            name="image"
-            label="Image"
-          >
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("image")} >
-              Click to upload
-            </Button>
-            {update.value2 ? (
-              <Input
-                name="image"
-                prefix={<Image
-                  width={50}
-                  src={proSettings.baseUrl + "/media/image/" + update.value2}
-                />} disabled />
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.description.label" />}
+              name="description"
+            >
+              <TextArea
+                style={{ minHeight: 32 }}
+                placeholder={formatMessage({ id: 'formandbasic-form.description.placeholder' })}
+                rows={4}
+              />
+            </FormItem>
+            {status || location.state.length == 0 ? (
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.status.label" />}
+                name="status"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                  },
+                ]}
+              >
+                <div>
+                  <Radio.Group defaultValue={status}>
+                    <Radio value="published">
+                      <FormattedMessage id="formandbasic-form.radio.publish" />
+                    </Radio>
+                    <Radio value="unpublished">
+                      <FormattedMessage id="formandbasic-form.radio.unpublish" />
+                    </Radio>
+                  </Radio.Group>
+                </div>
+              </FormItem>
             ) : null}
-          </Form.Item>
+
+            <Form.Item
+              {...formItemLayout}
+              name="icon"
+              label="Icon"
+            >
+              <Button icon={<UploadOutlined />} onClick={() => modelreq("icon")} >
+                Click to upload
+            </Button>
+              {update.value1 ? (
+                <Input
+                  name="icon"
+                  prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl + "/media/image/" + update.value1}
+                  />} disabled />
+              ) : null}
+            </Form.Item>
+
+            <Form.Item
+              {...formItemLayout}
+              name="image"
+              label="Image"
+            >
+              <Button icon={<UploadOutlined />} onClick={() => modelreq("image")} >
+                Click to upload
+            </Button>
+              {update.value2 ? (
+                <Input
+                  name="image"
+                  prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl + "/media/image/" + update.value2}
+                  />} disabled />
+              ) : null}
+            </Form.Item>
 
 
-          <Form.Item
-            {...formItemLayout}
-            name="banner"
-            label="Banner"
-          >
-            <Button icon={<UploadOutlined />} onClick={() => modelreq("banner")}>
-              Click to upload
+            <Form.Item
+              {...formItemLayout}
+              name="banner"
+              label="Banner"
+            >
+              <Button icon={<UploadOutlined />} onClick={() => modelreq("banner")}>
+                Click to upload
             </Button>
-            {update.value3 ? (
-              <Input
-                name="banner"
-                prefix={<Image
-                  width={50}
-                  src={proSettings.baseUrl + "/media/image/" + update.value3}
-                />} disabled />
-            ) : null}
-          </Form.Item>
-          <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-            <Button type="primary" htmlType="submit" loading={submitting}>
-              <FormattedMessage id="formandbasic-form.form.submit" />
-            </Button>
-            <Button style={{ marginLeft: 8 }}>
-              <FormattedMessage id="formandbasic-form.form.save" />
-            </Button>
-          </FormItem>
-        </Form>
+              {update.value3 ? (
+                <Input
+                  name="banner"
+                  prefix={<Image
+                    width={50}
+                    src={proSettings.baseUrl + "/media/image/" + update.value3}
+                  />} disabled />
+              ) : null}
+            </Form.Item>
+            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                <FormattedMessage id="formandbasic-form.form.submit" />
+              </Button>
+              <Button style={{ marginLeft: 8 }}>
+                <FormattedMessage id="formandbasic-form.form.save" />
+              </Button>
+            </FormItem>
+          </Form>
+        ) : null}
+
       </Card>
 
       <Modal
