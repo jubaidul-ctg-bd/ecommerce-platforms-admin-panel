@@ -120,7 +120,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   console.log(value1, value2, value3);
 
   const getOptions = async () => {
-    let val = await categoryQuery();
+    let val = await categoryQuery({term: 'Brand'});
     setOptions(val);
     let order = []
     order = Object.assign([], val)
@@ -164,6 +164,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   };
 
   const onFinish = (values: { [key: string]: any }) => {
+    if (location.state != undefined && location.state.id != undefined) values.id = location.state.id
+
     const { dispatch } = props;
     dispatch({
       type: 'brandAdd/submitRegularForm',

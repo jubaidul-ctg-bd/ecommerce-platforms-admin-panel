@@ -8,10 +8,11 @@ export async function fakeSubmitForm(params: any) {
   });
 }
 
-export async function categoryQuery() {
-  //console.log("params at queryRule");
-  let rqResult = request('/term/showParentCategory');
-  console.log("rqResult=============", rqResult);
+
+export async function categoryQuery(params?: {term: string}) {
+  let rqResult = await request('/term/allchild', {
+    params,
+  });
   return rqResult;
 }
 
